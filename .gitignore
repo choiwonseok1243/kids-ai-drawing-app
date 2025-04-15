@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # OSX
 .DS_Store
 
@@ -56,3 +57,6 @@ yarn-error.log
 .expo/
 dist/
 web-build/ 
+=======
+node_modules
+>>>>>>> 4558375 (Initial commit)
