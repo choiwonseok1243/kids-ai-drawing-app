@@ -50,7 +50,11 @@ export const MainTabNavigator = () => {
       />
       <Tab.Screen 
         name="Draw" 
+<<<<<<< HEAD
         component={CreateScreen} 
+=======
+        component={DrawScreen} 
+>>>>>>> b66f0db (Update HomeScreen with new upload image and improved layout)
         options={{ title: '제작' }}
       />
       <Tab.Screen 
