@@ -4,8 +4,8 @@ import { View, Text, StyleSheet } from 'react-native';
 export const MyGalleryScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>My Gallery</Text>
-      <Text style={styles.subtitle}>View your saved artworks</Text>
+      <Text style={styles.title}>보관함</Text>
+      <Text style={styles.subtitle}>나의 작품들을 모아보세요!</Text>
     </View>
   );
 };

@@ -39,10 +39,26 @@ export const MainTabNavigator = () => {
         tabBarInactiveTintColor: 'gray',
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Draw" component={DrawScreen} />
-      <Tab.Screen name="MyGallery" component={MyGalleryScreen} />
-      <Tab.Screen name="Settings" component={SettingsScreen} />
+      <Tab.Screen 
+        name="Home" 
+        component={HomeScreen} 
+        options={{ title: '업로드' }}
+      />
+      <Tab.Screen 
+        name="Draw" 
+        component={DrawScreen} 
+        options={{ title: '제작' }}
+      />
+      <Tab.Screen 
+        name="MyGallery" 
+        component={MyGalleryScreen} 
+        options={{ title: '보관함' }}
+      />
+      <Tab.Screen 
+        name="Settings" 
+        component={SettingsScreen} 
+        options={{ title: '만나러가기' }}
+      />
     </Tab.Navigator>
   );
 }; 
