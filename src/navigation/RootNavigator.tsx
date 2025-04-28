@@ -6,6 +6,8 @@ import { MainTabNavigator } from './MainTabNavigator';
 import { DrawingScreen } from '../screens/DrawingScreen';
 import { GalleryScreen } from '../screens/GalleryScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
+import { UploadPictureScreen } from '../screens/UploadPictureScreen';
+import { PictureDetailsScreen } from '../screens/PictureDetailsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -21,6 +23,8 @@ export const RootNavigator = () => {
         <Stack.Screen name="Drawing" component={DrawingScreen} />
         <Stack.Screen name="Gallery" component={GalleryScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
+        <Stack.Screen name="UploadPicture" component={UploadPictureScreen} />
+        <Stack.Screen name="PictureDetails" component={PictureDetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
