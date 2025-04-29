@@ -9,7 +9,7 @@ const { width } = Dimensions.get('window');
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [selectedImages, setSelectedImages] = useState<{ uri: string; title: string; description: string }[]>([]);
+  const [selectedImages, setSelectedImages] = useState<{ uri: string; title: string; description: string; time: string }[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
 
@@ -36,19 +36,20 @@ export const HomeScreen = () => {
     }
   };
 
-  const handleUploadFromUploadScreen = (newData: { uri: string; title: string; description: string }) => {
+  const handleUploadFromUploadScreen = (newData: { uri: string; title: string; description: string; time: string }) => {
     setSelectedImages(prev => [newData, ...prev]);
   };
 
-  const handleImagePress = (imageData: { uri: string; title: string; description: string }) => {
+  const handleImagePress = (imageData: { uri: string; title: string; description: string; time: string }) => {
     navigation.navigate('PictureDetails', {
       imageUri: imageData.uri,
       title: imageData.title,
       description: imageData.description,
+      time: imageData.time,
     });
   };
 
-  const renderItem = ({ item }: { item: { uri: string; title: string; description: string } }) => (
+  const renderItem = ({ item }: { item: { uri: string; title: string; description: string; time: string } }) => (
     <TouchableOpacity onPress={() => handleImagePress(item)} style={styles.imageWrapper}>
       <Image source={{ uri: item.uri }} style={styles.image} resizeMode="cover" />
       <Text style={styles.imageTitle}>{item.title}</Text>
@@ -181,13 +182,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
+    marginTop: 5
   },
   modalButton: {
     backgroundColor: '#7A1FA0',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginBottom: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+    marginBottom: 20,
   },
   modalButtonText: {
     color: 'white',
@@ -197,7 +199,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
+    borderRadius: 10,
   },
   modalCancelText: {
     color: '#333',

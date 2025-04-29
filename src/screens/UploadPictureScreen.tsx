@@ -1,4 +1,3 @@
-// UploadPictureScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Image, StyleSheet, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -6,14 +5,18 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 export const UploadPictureScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { imageUri, onUpload } = route.params as { imageUri: string; onUpload: (data: { uri: string; title: string; description: string }) => void };
+  const { imageUri, onUpload } = route.params as {
+    imageUri: string;
+    onUpload: (data: { uri: string; title: string; description: string; time: string }) => void;
+  };
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [time, setTime] = useState(''); // 시간 입력 추가
 
   const handleUpload = () => {
-    if (!title.trim() || !description.trim()) {
-      Alert.alert('알림', '제목과 내용을 모두 입력해주세요!');
+    if (!title.trim() || !description.trim() || !time.trim()) {
+      Alert.alert('알림', '제목, 내용, 시간을 모두 입력해주세요!');
       return;
     }
 
@@ -21,6 +24,7 @@ export const UploadPictureScreen = () => {
       uri: imageUri,
       title,
       description,
+      time,
     });
 
     Alert.alert('업로드 완료', '사진이 성공적으로 업로드되었습니다!', [
@@ -52,6 +56,13 @@ export const UploadPictureScreen = () => {
           onChangeText={setDescription}
           style={[styles.input, { height: 100 }]}
           multiline
+        />
+        <Text style={styles.label}>날짜</Text>
+        <TextInput
+          placeholder="예: 2025-04-29"
+          value={time}
+          onChangeText={setTime}
+          style={styles.input}
         />
         <View style={styles.buttonContainer}>
           <Button title="업로드" onPress={handleUpload} color="#7A1FA0" />
@@ -95,6 +106,5 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
     borderRadius: 10,
-
   },
 });
