@@ -192,9 +192,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
+<<<<<<< HEAD
     paddingTop: 20,
     marginBottom: 0,
     minHeight: 40,
+=======
+    paddingTop: 40,
+    paddingBottom: 20,
+    backgroundColor: '#fff',
+>>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
   },
   title: {
     flex: 1,
@@ -216,6 +222,7 @@ const styles = StyleSheet.create({
     color: '#EC913F',
     fontWeight: 'bold',
     textAlign: 'left',
+<<<<<<< HEAD
     paddingHorizontal: 20,
     marginBottom: 10,
     marginTop: 4,
@@ -226,15 +233,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     marginBottom: 10,
+=======
+>>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
   },
   button: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: '#7A1FA0',
+<<<<<<< HEAD
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
+=======
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    width: '90%',
+    marginBottom: 20,
+    alignSelf: 'center',
+>>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
   },
   buttonText: {
     color: '#fff',
@@ -246,6 +264,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   imageWrapper: {
+<<<<<<< HEAD
     width: (width - 40) / 2,
     marginBottom: 20,
     position: 'relative',
@@ -254,6 +273,19 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1,
     borderRadius: 12,
+=======
+    width: width * 0.46,
+    marginBottom: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
+  },
+  image: {
+    width: '100%',
+    height: width * 0.4,
+    borderRadius: 10,
+>>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
   },
   imageTitle: {
     fontSize: 14,
@@ -262,12 +294,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'BMJUA',
   },
+<<<<<<< HEAD
   deleteBtn: {
     position: 'absolute',
     top: -10,
     right: -10,
     backgroundColor: '#fff',
     borderRadius: 16,
+=======
+  columnWrapper: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 3,
+>>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
   },
   modalBackground: {
     flex: 1,

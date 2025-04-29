@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 export const CreateDetailScreen = ({ route, navigation }) => {
   const { drawing } = route.params;
+<<<<<<< HEAD
   // 장면 리스트: [{ image, prompt, isGenerated }]
   const [scenes, setScenes] = useState([
     { image: drawing.uri, prompt: drawing.description || '', isGenerated: true },
@@ -68,6 +69,10 @@ export const CreateDetailScreen = ({ route, navigation }) => {
     newScenes[currentIdx].isGenerated = true;
     setScenes(newScenes);
   };
+=======
+  const [title, setTitle] = useState(drawing.title || '');
+  const [description, setDescription] = useState(drawing.description || '');
+>>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
 
   const handleCancel = () => {
     navigation.goBack();
@@ -86,6 +91,7 @@ export const CreateDetailScreen = ({ route, navigation }) => {
     navigation.navigate('Main', { screen: '보관함' });
   };
 
+<<<<<<< HEAD
   // FlatList 렌더링 항목
   const renderScene = ({ item, index }) => (
     <View style={[styles.storyContainer, { width: windowWidth }]}> 
@@ -132,6 +138,19 @@ export const CreateDetailScreen = ({ route, navigation }) => {
           </TouchableOpacity>
           <View style={styles.sideBar} />
         </View>
+=======
+  return (
+    <View style={styles.container}>
+      <View style={styles.dateContainer}>
+        <Text style={styles.dateText}>{drawing.time}</Text>
+      </View>
+      <View style={styles.imageContainer}>
+        <Image 
+          source={{ uri: drawing.uri }} 
+          style={styles.image} 
+          resizeMode="contain"
+        />
+>>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
       </View>
       <View style={styles.storyBtnRow}>
         {!item.isGenerated && (
@@ -229,6 +248,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 20,
+    paddingTop: 30,
+  },
+  dateContainer: {
+    alignSelf: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#8B4CFC',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  dateText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
   },
   dateContainer: {
     marginBottom: 20,
