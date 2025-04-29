@@ -98,15 +98,14 @@ export const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    padding: 10,
-    paddingTop: 40,
     backgroundColor: '#fff',
   },
   textContainer: {
     alignSelf: 'stretch',
     paddingHorizontal: 20,
+    paddingTop: 40,
+    paddingBottom: 20,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
@@ -121,7 +120,6 @@ const styles = StyleSheet.create({
     color: '#EC913F',
     fontWeight: 'bold',
     textAlign: 'left',
-    marginBottom: 20,
   },
   button: {
     backgroundColor: '#7A1FA0',
@@ -130,6 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '90%',
     marginBottom: 20,
+    alignSelf: 'center',
   },
   buttonText: {
     color: '#fff',
@@ -138,8 +137,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imageWrapper: {
-    width: width * 0.42, // 한 이미지를 2개의 열에 맞추기 위해 너비를 50%로 설정
-    marginBottom: 20,
+    width: width * 0.46,
+    marginBottom: 12,
     backgroundColor: '#f5f5f5',
     borderRadius: 20,
     padding: 10,
@@ -147,7 +146,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: width * 0.4, // 이미지의 높이를 너비에 맞게 조정
+    height: width * 0.4,
     borderRadius: 10,
   },
   imageTitle: {
@@ -158,8 +157,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   columnWrapper: {
-    justifyContent: 'space-between', // 열 사이 간격 설정
-    marginBottom: 20,
+    justifyContent: 'space-between',
+    paddingHorizontal: 3,
   },
   modalBackground: {
     flex: 1,

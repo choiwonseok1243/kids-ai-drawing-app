@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, SafeAreaView } from 'react-native';
 import { useImages } from '../contexts/ImageContext';
+import { width } from '../constants/Dimensions';
 
 export const CreateScreen = ({ navigation }) => {
   const { images } = useImages();
@@ -9,32 +10,39 @@ export const CreateScreen = ({ navigation }) => {
     navigation.navigate('CreateDetail', { drawing });
   };
 
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      style={styles.gridItem}
+      onPress={() => handleSelectDrawing(item)}
+    >
+      <View style={styles.imageContainer}>
+        <Image
+          source={{ uri: item.uri }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      </View>
+      <Text style={styles.imageTitle}>{item.title}</Text>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>어떤 그림을 선택할까요?</Text>
         <Text style={styles.subtitle}>업로드한 그림으로 이야기를 만들어보세요!</Text>
       </View>
 
-      <View style={styles.gridContainer}>
-        {images.map((image, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.gridItem}
-            onPress={() => handleSelectDrawing(image)}
-          >
-            <View style={styles.imageContainer}>
-              <Image
-                source={{ uri: image.uri }}
-                style={styles.image}
-                resizeMode="cover"
-              />
-            </View>
-            <Text style={styles.imageTitle}>{image.title}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
+      <FlatList
+        data={images}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={2}
+        columnWrapperStyle={styles.gridContainer}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContainer}
+      />
+    </SafeAreaView>
   );
 };
 
@@ -42,12 +50,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 10,
     paddingTop: 40,
   },
   header: {
     alignSelf: 'stretch',
     paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 20,
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 24,
@@ -62,34 +72,37 @@ const styles = StyleSheet.create({
     color: '#EC913F',
     fontWeight: 'bold',
     textAlign: 'left',
-    marginBottom: 20,
+  },
+  listContainer: {
+    padding: 10,
   },
   gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    padding: 16,
     justifyContent: 'space-between',
+    paddingHorizontal: 5,
   },
   gridItem: {
-    width: '48%',
-    marginBottom: 16,
+    width: width * 0.44,
+    marginBottom: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+    padding: 10,
+    alignItems: 'center',
   },
   imageContainer: {
-    aspectRatio: 1,
-    backgroundColor: '#fff',
-    borderRadius: 8,
+    width: '100%',
+    height: width * 0.4,
+    borderRadius: 10,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
   },
   image: {
     width: '100%',
     height: '100%',
   },
   imageTitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 8,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginTop: 10,
     color: '#333',
+    textAlign: 'center',
   },
 }); 

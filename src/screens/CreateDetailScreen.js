@@ -4,8 +4,8 @@ import { colors, typography, spacing } from '../styles/theme';
 
 export const CreateDetailScreen = ({ route, navigation }) => {
   const { drawing } = route.params;
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState(drawing.title || '');
+  const [description, setDescription] = useState(drawing.description || '');
 
   const handleCancel = () => {
     navigation.goBack();
@@ -18,8 +18,15 @@ export const CreateDetailScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.dateContainer}>
+        <Text style={styles.dateText}>{drawing.time}</Text>
+      </View>
       <View style={styles.imageContainer}>
-        <Image source={drawing.image} style={styles.image} resizeMode="contain" />
+        <Image 
+          source={{ uri: drawing.uri }} 
+          style={styles.image} 
+          resizeMode="contain"
+        />
       </View>
 
       <View style={styles.formContainer}>
@@ -59,6 +66,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 20,
+    paddingTop: 30,
+  },
+  dateContainer: {
+    alignSelf: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#8B4CFC',
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  dateText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
   },
   imageContainer: {
     aspectRatio: 1,

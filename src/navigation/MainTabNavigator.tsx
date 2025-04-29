@@ -13,12 +13,13 @@ export const MainTabNavigator = () => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+        headerShown: false,
+        tabBarIcon: ({ focused, color }) => {
           let iconName;
 
           switch (route.name) {
             case 'Home':
-              iconName = focused ? 'home' : 'home-outline';
+              iconName = focused ? 'cloud-upload' : 'cloud-upload-outline';
               break;
             case 'Draw':
               iconName = focused ? 'brush' : 'brush-outline';
@@ -27,16 +28,19 @@ export const MainTabNavigator = () => {
               iconName = focused ? 'images' : 'images-outline';
               break;
             case 'Settings':
-              iconName = focused ? 'settings' : 'settings-outline';
+              iconName = focused ? 'happy' : 'happy-outline';
               break;
             default:
               iconName = 'help-outline';
           }
 
-          return <Ionicons name={iconName as any} size={size} color={color} />;
+          return <Ionicons name={iconName as any} size={26} color={color} />;
         },
         tabBarActiveTintColor: '#6200ee',
         tabBarInactiveTintColor: 'gray',
+        tabBarLabelStyle: {
+          fontSize: 13
+        }
       })}
     >
       <Tab.Screen 
