@@ -63,7 +63,9 @@ export const PictureDetailsScreen = () => {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView contentContainerStyle={styles.container}>
-        <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+        <View style={styles.imageWrapper}>
+          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+        </View>
         <Text style={styles.label}>제목</Text>
         <TextInput
           placeholder="제목을 입력하세요"
@@ -147,14 +149,24 @@ export const PictureDetailsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: '#fff',
     alignItems: 'center',
+    backgroundColor: '#FFF8F0',
+  },
+  imageWrapper: {
+    backgroundColor: '#FFE4E1',
+    padding: 10,
+    borderRadius: 20,
+    marginBottom: 20,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   image: {
-    width: '100%',
-    height: 300,
-    borderRadius: 15,
-    marginBottom: 20,
+    width: 280,
+    height: 280,
+    borderRadius: 20,
     backgroundColor: '#eee',
   },
   label: {
@@ -181,66 +193,32 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     gap: 10,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#FF8C94', // 따뜻한 핑크색
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  time: {
-    fontSize: 14,
-    color: '#A0A0A0',
-    marginTop: 5,
-    marginBottom: 15,
-  },
-  descriptionBox: {
-    backgroundColor: '#FFFAE3', // 연노랑 배경
-    padding: 15,
-    borderRadius: 15,
-    marginTop: 10,
-    width: '100%',
-  },
-  description: {
-    fontSize: 18,
-    color: '#555',
-    textAlign: 'center',
-    lineHeight: 24,
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 0,
   },
   buttonBase: {
-    height: 48,
+    paddingVertical: 14,
     borderRadius: 10,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 0,
-    paddingHorizontal: 0,
-  },
-  buttonTextBase: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontFamily: 'BMJUA',
-  },
-  editButton: {
-    backgroundColor: '#7A1FA0',
-  },
-  editButtonText: {
-    color: '#fff',
-    fontFamily: 'BMJUA',
+    marginBottom: 0,
   },
   saveButton: {
-    marginTop: 30,
-    backgroundColor: '#EC913F',
+    backgroundColor: '#7A1FA0',
   },
   saveButtonText: {
     color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
     fontFamily: 'BMJUA',
   },
-  cancelButton: {
-    backgroundColor: '#F5F5F5',
+  editButton: {
+    backgroundColor: '#A97AFF',
   },
-  cancelButtonText: {
-    color: '#7A1FA0',
+  editButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
     fontFamily: 'BMJUA',
   },
   deleteButton: {
@@ -248,6 +226,22 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+    fontFamily: 'BMJUA',
+  },
+  cancelButton: {
+    backgroundColor: '#ccc',
+  },
+  cancelButtonText: {
+    color: '#333',
+    fontWeight: 'bold',
+    fontSize: 18,
+    fontFamily: 'BMJUA',
+  },
+  buttonTextBase: {
+    fontSize: 18,
+    fontWeight: 'bold',
     fontFamily: 'BMJUA',
   },
   modalOverlay: {
@@ -256,68 +250,53 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
   },
   modalContainer: {
-    backgroundColor: '#FFF8F0',
-    borderRadius: 20,
-    padding: 30,
+    backgroundColor: 'white',
+    borderRadius: 18,
+    padding: 24,
+    width: '80%',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 10,
   },
   modalText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#7A1FA0',
-    marginBottom: 20,
+    marginBottom: 18,
     fontFamily: 'BMJUA',
   },
   modalButtonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 180,
+    width: '100%',
+    marginTop: 10,
   },
   modalYesButton: {
-    backgroundColor: '#7A1FA0',
-    borderRadius: 10,
+    backgroundColor: '#FF8C94',
+    borderRadius: 8,
     paddingVertical: 10,
-    paddingHorizontal: 25,
+    paddingHorizontal: 32,
     marginRight: 10,
   },
   modalYesText: {
     color: '#fff',
-    fontSize: 18,
     fontWeight: 'bold',
+    fontSize: 16,
     fontFamily: 'BMJUA',
   },
   modalNoButton: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
+    backgroundColor: '#eee',
+    borderRadius: 8,
     paddingVertical: 10,
-    paddingHorizontal: 25,
+    paddingHorizontal: 32,
   },
   modalNoText: {
-    color: '#7A1FA0',
-    fontSize: 18,
-    fontWeight: 'bold',
-    fontFamily: 'BMJUA',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: 0, // gap은 RN 0.71+에서만 지원, marginLeft로 대체
-  },
-  value: {
-    fontSize: 16,
     color: '#333',
+    fontWeight: 'bold',
+    fontSize: 16,
     fontFamily: 'BMJUA',
   },
 });

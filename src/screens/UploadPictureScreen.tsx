@@ -1,4 +1,3 @@
-// UploadPictureScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, Image, StyleSheet, KeyboardAvoidingView, Platform, Alert, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -16,14 +15,11 @@ export const UploadPictureScreen = () => {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  dayjs.locale('ko');
-  const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const formatDate = (date: Date) => dayjs(date).format('YYYY년 M월 D일 (dd)');
+  const [time, setTime] = useState('');
 
   const handleUpload = () => {
-    if (!title.trim() || !description.trim()) {
-      Alert.alert('알림', '제목, 내용, 날짜를 모두 입력해주세요!');
+    if (!title.trim() || !description.trim() || !time.trim()) {
+      Alert.alert('알림', '제목, 내용, 시간을 모두 입력해주세요!');
       return;
     }
 
@@ -31,7 +27,7 @@ export const UploadPictureScreen = () => {
       uri: imageUri,
       title,
       description,
-      time: formatDate(date),
+      time,
     });
 
     Alert.alert('업로드 완료', '사진이 성공적으로 업로드되었습니다!', [
@@ -46,57 +42,38 @@ export const UploadPictureScreen = () => {
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <View style={{ flex: 1 }}>
-          <ScrollView
-            contentContainerStyle={[styles.container, { flexGrow: 1, justifyContent: 'flex-start', paddingBottom: 0 }]}
-            keyboardShouldPersistTaps="handled"
-          >
-            <Image source={{ uri: imageUri }} style={styles.bigImage} resizeMode="contain" />
-            <Text style={[styles.bigLabel, { color: '#A97AFF', fontFamily: 'BMJUA' }]}>제목</Text>
-            <TextInput
-              placeholder="제목을 입력해주세요"
-              placeholderTextColor="#333"
-              value={title}
-              onChangeText={setTitle}
-              style={[styles.bigInput, { backgroundColor: '#F5F5F5', color: '#333', fontFamily: 'BMJUA' }]}
-            />
-            <Text style={[styles.bigLabel, { color: '#A97AFF', fontFamily: 'BMJUA' }]}>내용</Text>
-            <TextInput
-              placeholder="내용을 입력해주세요"
-              placeholderTextColor="#333"
-              value={description}
-              onChangeText={setDescription}
-              style={[styles.bigInput, { height: 120, backgroundColor: '#F5F5F5', color: '#333', fontFamily: 'BMJUA' }]}
-              multiline
-            />
-            <Text style={[styles.bigLabel, { color: '#A97AFF', fontFamily: 'BMJUA' }]}>날짜</Text>
-            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={[styles.bigInput, { backgroundColor: '#F5F5F5' }]}> 
-              <Text style={{ color: '#333', fontFamily: 'BMJUA' }}>{formatDate(date)}</Text>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+          <Text style={styles.label}>제목</Text>
+          <TextInput
+            placeholder="제목을 입력하세요"
+            value={title}
+            onChangeText={setTitle}
+            style={styles.input}
+          />
+          <Text style={styles.label}>내용</Text>
+          <TextInput
+            placeholder="내용을 입력하세요"
+            value={description}
+            onChangeText={setDescription}
+            style={[styles.input, { height: 100 }]}
+            multiline
+          />
+          <Text style={styles.label}>날짜</Text>
+          <TextInput
+            placeholder="예: 2025-04-29"
+            value={time}
+            onChangeText={setTime}
+            style={styles.input}
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={[styles.uploadButton, { backgroundColor: '#A97AFF' }]} onPress={handleUpload} activeOpacity={0.85}>
+              <Text style={[styles.uploadButtonText, { fontFamily: 'BMJUA' }]}>업로드</Text>
             </TouchableOpacity>
-            <DateTimePickerModal
-              isVisible={showDatePicker}
-              mode="date"
-              date={date}
-              maximumDate={new Date()}
-              onConfirm={selectedDate => {
-                setShowDatePicker(false);
-                setDate(selectedDate);
-              }}
-              onCancel={() => setShowDatePicker(false)}
-              locale="ko"
-              confirmTextIOS="확인"
-              cancelTextIOS="취소"
-            />
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={[styles.uploadButton, { backgroundColor: '#A97AFF' }]} onPress={handleUpload} activeOpacity={0.85}>
-                <Text style={[styles.uploadButtonText, { fontFamily: 'BMJUA' }]}>업로드</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </View>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -108,20 +85,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
   },
-  bigImage: {
+  image: {
     width: '100%',
     height: 300,
     borderRadius: 20,
     marginBottom: 20,
   },
-  bigLabel: {
+  label: {
     alignSelf: 'flex-start',
     marginBottom: 8,
     fontWeight: 'bold',
     fontSize: 16,
     fontFamily: 'BMJUA',
   },
-  bigInput: {
+  input: {
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 10,
@@ -137,16 +114,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   uploadButton: {
-    backgroundColor: '#007AFF',
+    padding: 15,
     borderRadius: 10,
-    paddingVertical: 15,
     width: '100%',
-    alignItems: 'center',
   },
   uploadButtonText: {
-    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
-    fontSize: 18,
-    fontFamily: 'BMJUA',
   },
 });

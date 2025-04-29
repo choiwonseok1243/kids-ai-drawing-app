@@ -13,7 +13,7 @@ export type RootStackParamList = {
     imageUri: string;
     title: string;
     description: string;
-    time: string
+    time: string;
   };
   CreateDetail: {
     drawing: {
