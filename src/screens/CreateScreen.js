@@ -14,21 +14,9 @@ export const CreateScreen = ({ navigation }) => {
     navigation.navigate('CreateDetail', { drawing });
   };
 
-  const cardIcons = [
-    { name: 'paw', color: '#FFB6B6' },
-    { name: 'balloon', color: '#FFD700' },
-    { name: 'star', color: '#FFD700' },
-    { name: 'cloud', color: '#B2E2FF' },
-    { name: 'people', color: '#A3D977' },
-    { name: 'heart', color: '#FF8C94' },
-  ];
-
-  const pastelGradients = [
-    ['#F8E8FF', '#FFF9D9'],
-    ['#D6F6FF', '#E6E6FF'],
-    ['#FFF3E0', '#E0FFE4'],
-  ];
-  const cardEmojis = ['🐻', '🎈', '⭐', '☁️', '🦄', '🦊', '🐥', '🦕'];
+  const filteredImages = images.filter(image => 
+    image.title?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -85,7 +73,7 @@ export const CreateScreen = ({ navigation }) => {
         </View>
       </Modal>
       <FlatList
-        data={images}
+        data={filteredImages}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
@@ -137,6 +125,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontFamily: 'BMJUA',
   },
+  searchBarWrapper: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
   listContainer: {
     padding: 10,
   },
@@ -144,96 +136,73 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 5,
   },
+  gridItem: {
+    width: (width - 40) / 2,
+    marginBottom: 20,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
   imageContainer: {
     width: '100%',
-    height: width * 0.4,
-    borderRadius: 16,
-    overflow: 'hidden',
-    position: 'relative',
-    backgroundColor: '#fff',
-    marginBottom: 8,
+    aspectRatio: 1,
+    backgroundColor: '#f5f5f5',
   },
   image: {
     width: '100%',
     height: '100%',
   },
   imageTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 10,
+    fontSize: 14,
     color: '#333',
+    padding: 10,
     textAlign: 'center',
     fontFamily: 'BMJUA',
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
     backgroundColor: '#fff',
-    borderRadius: 18,
-    padding: 28,
-    width: '85%',
-    alignItems: 'flex-start',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 8,
+    borderRadius: 20,
+    padding: 24,
+    width: '90%',
+    maxWidth: 400,
   },
   guideTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#7A1FA0',
-    marginBottom: 16,
-    alignSelf: 'center',
+    marginBottom: 20,
+    textAlign: 'center',
     fontFamily: 'BMJUA',
   },
   guideText: {
-    fontSize: 15,
+    fontSize: 16,
     color: '#333',
-    marginBottom: 8,
-    lineHeight: 22,
+    marginBottom: 12,
+    lineHeight: 24,
     fontFamily: 'BMJUA',
   },
   closeBtn: {
-    alignSelf: 'center',
-    marginTop: 18,
-    backgroundColor: '#FFB6C1',
-    borderRadius: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 36,
-    shadowColor: '#FFB6C1',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.18,
-    shadowRadius: 6,
-    elevation: 4,
+    backgroundColor: '#7A1FA0',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 20,
+    alignItems: 'center',
   },
   closeBtnText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
     fontFamily: 'BMJUA',
-  },
-  searchBarWrapper: {
-    paddingHorizontal: 20,
-    marginBottom: 10,
-  },
-  gridItem: {
-    width: width * 0.44,
-    marginBottom: 16,
-    borderRadius: 24,
-    padding: 12,
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    shadowColor: '#E0BBFF',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.18,
-    shadowRadius: 8,
-    elevation: 6,
-    borderWidth: 2,
-    borderColor: '#fff',
   },
 }); 

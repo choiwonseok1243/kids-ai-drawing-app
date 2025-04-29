@@ -25,6 +25,13 @@ export type RootStackParamList = {
   StoryPlayer: {
     story: any;
   };
+  CreateDetail: {
+    drawing: {
+      id: number;
+      title: string;
+      image: any;
+    };
+  };
 };
 
 export type MainTabParamList = {

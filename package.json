@@ -15,7 +15,7 @@
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
-    "@react-navigation/stack": "^6.3.20",
+    "@react-navigation/stack": "^6.3.25",
     "dayjs": "^1.11.13",
     "expo": "~53.0.0",
     "expo-app-loading": "^2.1.1",

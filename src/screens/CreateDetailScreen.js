@@ -13,6 +13,8 @@ export const CreateDetailScreen = ({ route, navigation }) => {
   ]);
   const [currentIdx, setCurrentIdx] = useState(0);
   const [showStoryboard, setShowStoryboard] = useState(false);
+  const [title, setTitle] = useState(drawing.title || '');
+  const [description, setDescription] = useState(drawing.description || '');
 
   const flatListRef = React.useRef();
   const windowWidth = Dimensions.get('window').width;
@@ -75,8 +77,8 @@ export const CreateDetailScreen = ({ route, navigation }) => {
   const handleComplete = () => {
     const story = {
       uri: scenes[0]?.image,
-      title: drawing.title,
-      description: drawing.description,
+      title: title,
+      description: description,
       time: new Date().toISOString().slice(0, 10),
       scenes,
     };
@@ -87,7 +89,7 @@ export const CreateDetailScreen = ({ route, navigation }) => {
   // FlatList 렌더링 항목
   const renderScene = ({ item, index }) => (
     <View style={[styles.storyContainer, { width: windowWidth }]}> 
-      <Text style={styles.storyTitle}>{drawing.title}</Text>
+      <Text style={styles.storyTitle}>{title}</Text>
       <Text
         style={[
           styles.sceneNumber,
@@ -142,7 +144,7 @@ export const CreateDetailScreen = ({ route, navigation }) => {
   );
 
   if (!showStoryboard) {
-    // 1단계: 업로드 정보만 보여주기 (원래대로 복구)
+    // 1단계: 업로드 정보만 보여주기
     return (
       <View style={styles.container}>
         <View style={styles.dateContainer}>
@@ -153,9 +155,21 @@ export const CreateDetailScreen = ({ route, navigation }) => {
         </View>
         <View style={styles.formContainer}>
           <Text style={[styles.label, { fontFamily: 'BMJUA' }]}>제목</Text>
-          <Text style={styles.infoText}>{drawing.title}</Text>
+          <TextInput
+            style={styles.input}
+            value={title}
+            onChangeText={setTitle}
+            placeholder="제목을 입력하세요"
+          />
           <Text style={[styles.label, { fontFamily: 'BMJUA' }]}>내용</Text>
-          <Text style={styles.infoText}>{drawing.description}</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            value={description}
+            onChangeText={setDescription}
+            placeholder="내용을 입력하세요"
+            multiline
+            numberOfLines={4}
+          />
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
@@ -182,54 +196,28 @@ export const CreateDetailScreen = ({ route, navigation }) => {
           <Text style={styles.topDoneBtnText}>완료</Text>
         </TouchableOpacity>
       </View>
+
+      {/* 스토리보드 */}
       <FlatList
         ref={flatListRef}
         data={scenes}
         renderItem={renderScene}
-        keyExtractor={(_, idx) => idx.toString()}
+        keyExtractor={(_, index) => index.toString()}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
-        initialScrollIndex={currentIdx}
         onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{ itemVisiblePercentThreshold: 60 }}
-        getItemLayout={(_, index) => ({ length: windowWidth, offset: windowWidth * index, index })}
-        style={{ flex: 1 }}
+        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 50 }}
       />
-      {/* 이야기 내용 입력란을 도트 위에 배치 */}
-      <View style={styles.gradientBox}>
-        <Text style={styles.gradientLabel}>이야기 내용</Text>
-        <TextInput
-          style={[
-            styles.gradientInput,
-            { minHeight: 60, maxHeight: 200, textAlignVertical: 'top' }
-          ]}
-          value={scenes[currentIdx].prompt}
-          onChangeText={text => {
-            const newScenes = [...scenes];
-            newScenes[currentIdx].prompt = text;
-            setScenes(newScenes);
-          }}
-          placeholder="이 장면의 이야기를 입력해 주세요."
-          multiline
-          scrollEnabled={true}
-        />
-      </View>
-      {/* 도트와 화살표를 한 줄에 배치 */}
-      <View style={styles.indexRow}>
-        <TouchableOpacity style={styles.arrowBtn} onPress={goPrev} disabled={currentIdx === 0}>
-          <Ionicons name="chevron-back" size={28} color={currentIdx === 0 ? '#A16AE855' : '#A16AE8'} />
+
+      {/* 하단 네비게이션 */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity onPress={goPrev} disabled={currentIdx === 0}>
+          <Ionicons name="chevron-back" size={24} color={currentIdx === 0 ? '#ccc' : '#000'} />
         </TouchableOpacity>
-        {scenes.map((_, idx) => (
-          <TouchableOpacity key={idx} onPress={() => {
-            flatListRef.current.scrollToIndex({ index: idx, animated: true });
-            setCurrentIdx(idx);
-          }}>
-            <View style={[styles.dot, idx === currentIdx && styles.dotActive]} />
-          </TouchableOpacity>
-        ))}
-        <TouchableOpacity style={styles.arrowBtn} onPress={goNext} disabled={currentIdx === scenes.length - 1}>
-          <Ionicons name="chevron-forward" size={28} color={currentIdx === scenes.length - 1 ? '#A16AE855' : '#A16AE8'} />
+        <Text style={styles.pageIndicator}>{currentIdx + 1} / {scenes.length}</Text>
+        <TouchableOpacity onPress={goNext} disabled={currentIdx === scenes.length - 1}>
+          <Ionicons name="chevron-forward" size={24} color={currentIdx === scenes.length - 1 ? '#ccc' : '#000'} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -241,33 +229,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 20,
-    paddingTop: 40,
-    justifyContent: 'center',
   },
   dateContainer: {
-    alignSelf: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#8B4CFC',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
     marginBottom: 20,
   },
   dateText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    textAlign: 'center',
+    fontSize: 16,
+    color: '#666',
   },
   imageContainer: {
-    aspectRatio: 1,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#E5E5E5',
+    width: '100%',
+    height: 300,
     marginBottom: 20,
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
@@ -277,17 +252,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#333',
+    marginBottom: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#E5E5E5',
+    borderColor: '#ddd',
     borderRadius: 8,
     padding: 12,
-    marginBottom: 16,
+    marginBottom: 20,
     fontSize: 16,
   },
   textArea: {
@@ -297,41 +271,81 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 'auto',
   },
   button: {
     flex: 1,
     padding: 15,
     borderRadius: 8,
-    alignItems: 'center',
-    marginHorizontal: 8,
+    marginHorizontal: 5,
   },
   cancelButton: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#f3f4f6',
   },
   submitButton: {
-    backgroundColor: '#8B4CFC',
+    backgroundColor: '#8b5cf6',
   },
   buttonText: {
+    textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
-    fontFamily: 'BMJUA',
   },
   submitButtonText: {
     color: '#fff',
-    fontFamily: 'BMJUA',
   },
-  sceneRow: {
+  storyContainer: {
+    flex: 1,
+    padding: 20,
+  },
+  storyTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  sceneNumber: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  sceneRowWrap: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
   },
-  addBtn: {
-    fontSize: 24,
+  sideBarWrap: {
+    width: 40,
+    alignItems: 'center',
+  },
+  sideAddBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#8b5cf6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  sideAddBtnText: {
+    color: '#fff',
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#8B4CFC',
-    padding: 10,
+  },
+  sideBar: {
+    width: 2,
+    flex: 1,
+    backgroundColor: '#e5e7eb',
+  },
+  sceneImageWrapper: {
+    flex: 1,
+    height: 400,
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: '#f3f4f6',
+  },
+  sceneImage: {
+    width: '100%',
+    height: '100%',
   },
   placeholder: {
     flex: 1,
@@ -339,251 +353,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   placeholderText: {
+    color: '#666',
     fontSize: 16,
-    color: '#333',
-    fontFamily: 'BMJUA',
-    fontWeight: '500',
-  },
-  indexRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 20,
-    marginTop: 32,
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#E5E5E5',
-    marginHorizontal: 5,
-  },
-  dotActive: {
-    backgroundColor: '#8B4CFC',
-  },
-  generateBtn: {
-    backgroundColor: '#8B4CFC',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  generateBtnText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  infoText: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 16,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    padding: 12,
-    fontFamily: 'BMJUA',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  storyTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#222',
-    textAlign: 'center',
-    alignSelf: 'center',
-    marginBottom: 12,
-    fontFamily: 'BMJUA',
-  },
-  doneBtn: {
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: '#8B4CFC',
-  },
-  doneBtnText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
-    fontFamily: 'BMJUA',
-  },
-  sceneCenter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  sceneImageWrapper: {
-    width: 220,
-    height: 220,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: '#E5E5E5',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 8,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-  },
-  sceneImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 10,
-  },
-  sceneNumber: {
-    fontSize: 16,
-    color: '#7A1FA0',
-    textAlign: 'center',
-    alignSelf: 'center',
-    marginBottom: 12,
-    fontFamily: 'BMJUA',
-  },
-  sideShadow: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
-  },
-  storyBox: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 20,
-  },
-  storyLabel: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    color: '#333',
-    fontFamily: 'BMJUA',
-  },
-  storyContent: {
-    fontSize: 16,
-    color: '#333',
-    fontFamily: 'BMJUA',
   },
   storyBtnRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  gradientBox: {
-    width: 260,
-    marginTop: 12,
-    marginBottom: 18,
-    borderRadius: 18,
-    padding: 18,
-    backgroundColor: 'linear-gradient(90deg, #E0C3FC 0%, #8EC5FC 100%)',
-    alignItems: 'flex-start',
-    alignSelf: 'center',
-    elevation: 2,
-    borderWidth: 2,
-    borderColor: '#A16AE8',
-  },
-  gradientLabel: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#A16AE8',
-    marginBottom: 8,
-    fontFamily: 'BMJUA',
-  },
-  gradientInput: {
-    width: '100%',
-    minHeight: 60,
-    fontSize: 15,
-    color: '#333',
-    backgroundColor: 'transparent',
-    borderWidth: 0,
-    padding: 0,
-    fontFamily: 'BMJUA',
-  },
-  scrollContainer: {
-    flexGrow: 1,
-    backgroundColor: '#fff',
-    padding: 20,
-    paddingTop: 30,
-  },
-  titleNumberWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  storyContainer: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: '#F7F6FB',
-    paddingTop: 32,
-  },
-  sceneRowWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 32,
-    alignSelf: 'center',
+    marginTop: 20,
   },
-  sideBarWrap: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 220,
-    marginHorizontal: 6,
+  generateBtn: {
+    backgroundColor: '#8b5cf6',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
   },
-  sideBar: {
-    width: 6,
-    height: 180,
-    backgroundColor: '#E5E5E5',
-    borderRadius: 3,
-    marginTop: 4,
-  },
-  sideAddBtn: {
-    marginBottom: 4,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-  },
-  sideAddBtnText: {
-    fontSize: 22,
+  generateBtnText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
-    color: '#8B4CFC',
-  },
-  arrowBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 20,
-    backgroundColor: 'rgba(0,0,0,0.08)',
-    marginHorizontal: 6,
-  },
-  arrowText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#7A1FA0',
-    fontFamily: 'BMJUA',
   },
   topDoneBtn: {
-    backgroundColor: '#8B4CFC',
-    paddingVertical: 8,
-    paddingHorizontal: 22,
-    borderRadius: 20,
-    marginLeft: 8,
-    elevation: 2,
+    backgroundColor: '#8b5cf6',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
   },
   topDoneBtnText: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    letterSpacing: 1,
-    fontFamily: 'BMJUA',
+  },
+  bottomNav: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+  },
+  pageIndicator: {
+    fontSize: 16,
+    color: '#666',
   },
 }); 

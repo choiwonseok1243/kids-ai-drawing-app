@@ -60,7 +60,10 @@ export const RootNavigator = () => {
             <Stack.Screen 
               name="CreateDetail" 
               component={CreateDetailScreen}
-              options={{ headerShown: true }}
+              options={{ 
+                headerShown: true,
+                title: '그림 만들기'
+              }}
             />
             <Stack.Screen 
               name="StoryPlayer" 
