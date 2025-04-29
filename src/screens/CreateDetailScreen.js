@@ -1,137 +1,123 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Image, ScrollView } from 'react-native';
-import { colors, typography, spacing, layout } from '../styles/theme';
-import { Button } from '../components/common/Button';
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import { colors, typography, spacing } from '../styles/theme';
 
 export const CreateDetailScreen = ({ route, navigation }) => {
   const { drawing } = route.params;
   const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleCancel = () => {
     navigation.goBack();
   };
 
   const handleSubmit = () => {
-    // TODO: 서버에 데이터 전송 로직 추가
-    console.log({ drawing, title, content });
-    navigation.goBack();
+    // TODO: AI 그림 생성 로직 구현
+    console.log('Creating AI drawing with:', { title, description });
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>이 그림으로 동화를 꾸며볼까요?</Text>
-      </View>
-
+    <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <Image
-          source={drawing.image}
-          style={styles.image}
-          resizeMode="contain"
-        />
+        <Image source={drawing.image} style={styles.image} resizeMode="contain" />
       </View>
 
-      <View style={styles.form}>
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>제목</Text>
-          <TextInput
-            style={styles.input}
-            value={title}
-            onChangeText={setTitle}
-            placeholder="동화의 제목을 입력해주세요"
-            placeholderTextColor={colors.gray.medium}
-          />
-        </View>
+      <View style={styles.formContainer}>
+        <Text style={styles.label}>제목</Text>
+        <TextInput
+          style={styles.input}
+          value={title}
+          onChangeText={setTitle}
+          placeholder="제목을 입력하세요"
+        />
 
-        <View style={styles.inputContainer}>
-          <Text style={styles.label}>내용</Text>
-          <TextInput
-            style={[styles.input, styles.contentInput]}
-            value={content}
-            onChangeText={setContent}
-            placeholder="우리가 상상한 이야기를 자유롭게 적어보세요"
-            placeholderTextColor={colors.gray.medium}
-            multiline
-            numberOfLines={4}
-            textAlignVertical="top"
-          />
-        </View>
+        <Text style={styles.label}>내용</Text>
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          value={description}
+          onChangeText={setDescription}
+          placeholder="내용을 입력하세요"
+          multiline
+          numberOfLines={4}
+        />
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button
-          title="취소"
-          variant="outline"
-          onPress={handleCancel}
-          style={styles.button}
-        />
-        <Button
-          title="등록"
-          variant="primary"
-          onPress={handleSubmit}
-          style={styles.button}
-        />
+        <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
+          <Text style={styles.buttonText}>취소</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, styles.submitButton]} onPress={handleSubmit}>
+          <Text style={[styles.buttonText, styles.submitButtonText]}>등록</Text>
+        </TouchableOpacity>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    padding: spacing.md,
-    marginTop: spacing.lg,
-  },
-  title: {
-    ...typography.h1,
-    color: colors.text,
-    marginBottom: spacing.md,
+    backgroundColor: '#fff',
+    padding: 20,
   },
   imageContainer: {
     aspectRatio: 1,
-    margin: spacing.md,
-    borderRadius: layout.borderRadius,
+    backgroundColor: '#fff',
+    borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: colors.gray.light,
-    ...layout.shadow,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+    marginBottom: 20,
   },
   image: {
     width: '100%',
     height: '100%',
   },
-  form: {
-    padding: spacing.md,
-  },
-  inputContainer: {
-    marginBottom: spacing.md,
+  formContainer: {
+    marginBottom: 20,
   },
   label: {
-    ...typography.h2,
-    marginBottom: spacing.xs,
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+    color: '#333',
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.gray.light,
-    borderRadius: layout.borderRadius,
-    padding: spacing.sm,
-    ...typography.body,
+    borderColor: '#E5E5E5',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 16,
+    fontSize: 16,
   },
-  contentInput: {
-    height: 120,
+  textArea: {
+    height: 100,
     textAlignVertical: 'top',
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: spacing.md,
-    marginBottom: spacing.xl,
+    marginTop: 'auto',
   },
   button: {
     flex: 1,
-    marginHorizontal: spacing.xs,
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 8,
+  },
+  cancelButton: {
+    backgroundColor: '#F5F5F5',
+  },
+  submitButton: {
+    backgroundColor: '#8B4CFC',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  submitButtonText: {
+    color: '#fff',
   },
 }); 

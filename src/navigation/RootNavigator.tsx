@@ -8,24 +8,33 @@ import { GalleryScreen } from '../screens/GalleryScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { UploadPictureScreen } from '../screens/UploadPictureScreen';
 import { PictureDetailsScreen } from '../screens/PictureDetailsScreen';
+import { CreateDetailScreen } from '../screens/CreateDetailScreen';
+import { ImageProvider } from '../contexts/ImageContext';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootNavigator = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen 
-          name="Main" 
-          component={MainTabNavigator} 
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen name="Drawing" component={DrawingScreen} />
-        <Stack.Screen name="Gallery" component={GalleryScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} />
-        <Stack.Screen name="UploadPicture" component={UploadPictureScreen} />
-        <Stack.Screen name="PictureDetails" component={PictureDetailsScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ImageProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen 
+            name="Main" 
+            component={MainTabNavigator} 
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="Drawing" component={DrawingScreen} />
+          <Stack.Screen name="Gallery" component={GalleryScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
+          <Stack.Screen name="UploadPicture" component={UploadPictureScreen} />
+          <Stack.Screen name="PictureDetails" component={PictureDetailsScreen} />
+          <Stack.Screen 
+            name="CreateDetail" 
+            component={CreateDetailScreen}
+            options={{ title: '그림 만들기' }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ImageProvider>
   );
 }; 

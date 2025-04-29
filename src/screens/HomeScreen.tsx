@@ -1,15 +1,16 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Alert, FlatList, Modal } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { useImages } from '../contexts/ImageContext';
 
 const { width } = Dimensions.get('window');
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [selectedImages, setSelectedImages] = useState<{ uri: string; title: string; description: string; time: string }[]>([]);
+  const { images, addImage } = useImages();
   const [modalVisible, setModalVisible] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
 
@@ -25,19 +26,15 @@ export const HomeScreen = () => {
 
     if (!result.canceled) {
       const newImageUri = result.assets[0].uri;
-      setPendingImageUri(newImageUri); // 일단 임시 저장
+      setPendingImageUri(newImageUri);
       closeModal();
       navigation.navigate('UploadPicture', {
         imageUri: newImageUri,
-        onUpload: handleUploadFromUploadScreen, // 고정된 핸들러 넘기기
+        onUpload: addImage,
       });
     } else {
       Alert.alert('이미지 선택이 취소되었습니다');
     }
-  };
-
-  const handleUploadFromUploadScreen = (newData: { uri: string; title: string; description: string; time: string }) => {
-    setSelectedImages(prev => [newData, ...prev]);
   };
 
   const handleImagePress = (imageData: { uri: string; title: string; description: string; time: string }) => {
@@ -67,7 +64,6 @@ export const HomeScreen = () => {
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
 
-      {/* 모달 */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -88,7 +84,7 @@ export const HomeScreen = () => {
       </Modal>
 
       <FlatList
-        data={selectedImages}
+        data={images}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}

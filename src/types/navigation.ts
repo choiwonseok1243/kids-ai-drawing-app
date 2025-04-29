@@ -13,6 +13,13 @@ export type RootStackParamList = {
     description: string;
     time: string
   };
+  CreateDetail: {
+    drawing: {
+      id: number;
+      title: string;
+      image: any;
+    };
+  };
 };
 
 export type MainTabParamList = {

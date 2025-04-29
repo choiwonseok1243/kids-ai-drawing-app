@@ -1,109 +1,95 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { colors, typography, spacing, layout } from '../styles/theme';
-
-const SAMPLE_DRAWINGS = [
-  {
-    id: 1,
-    title: '꽃밭과 그림판',
-    image: require('../assets/images/sample1.png')
-  },
-  {
-    id: 2,
-    title: '작약 꽃나들',
-    image: require('../assets/images/sample2.png')
-  },
-  {
-    id: 3,
-    title: '마법의 아티카드',
-    image: require('../assets/images/sample3.png')
-  },
-  {
-    id: 4,
-    title: '나모를 정돈케 돕까',
-    image: require('../assets/images/sample4.png')
-  }
-];
+import { useImages } from '../contexts/ImageContext';
 
 export const CreateScreen = ({ navigation }) => {
-  const [selectedDrawing, setSelectedDrawing] = useState(null);
+  const { images } = useImages();
 
-  const handleDrawingSelect = (drawing) => {
-    setSelectedDrawing(drawing);
+  const handleSelectDrawing = (drawing) => {
     navigation.navigate('CreateDetail', { drawing });
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>어떤한 그림으로 이야기를 만들어 볼까요?</Text>
-        <Text style={styles.subtitle}>마법처리 그리고 나의 이야기를 만들어요!</Text>
+        <Text style={styles.title}>어떤 그림을 선택할까요?</Text>
+        <Text style={styles.subtitle}>업로드한 그림으로 이야기를 만들어보세요!</Text>
       </View>
 
       <View style={styles.gridContainer}>
-        {SAMPLE_DRAWINGS.map((drawing) => (
+        {images.map((image, index) => (
           <TouchableOpacity
-            key={drawing.id}
+            key={index}
             style={styles.gridItem}
-            onPress={() => handleDrawingSelect(drawing)}
+            onPress={() => handleSelectDrawing(image)}
           >
             <View style={styles.imageContainer}>
               <Image
-                source={drawing.image}
+                source={{ uri: image.uri }}
                 style={styles.image}
                 resizeMode="cover"
               />
             </View>
-            <Text style={styles.imageTitle}>{drawing.title}</Text>
+            <Text style={styles.imageTitle}>{image.title}</Text>
           </TouchableOpacity>
         ))}
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: '#fff',
+    padding: 10,
+    paddingTop: 40,
   },
   header: {
-    padding: spacing.md,
-    marginTop: spacing.lg,
+    alignSelf: 'stretch',
+    paddingHorizontal: 20,
   },
   title: {
-    ...typography.h1,
-    color: colors.text,
-    marginBottom: spacing.xs,
+    fontSize: 24,
+    lineHeight: 34,
+    color: '#7A1FA0',
+    fontWeight: 'bold',
+    marginBottom: 5,
+    textAlign: 'left',
   },
   subtitle: {
-    ...typography.body,
-    color: colors.gray.medium,
+    fontSize: 16,
+    color: '#EC913F',
+    fontWeight: 'bold',
+    textAlign: 'left',
+    marginBottom: 20,
   },
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    padding: spacing.sm,
+    padding: 16,
     justifyContent: 'space-between',
   },
   gridItem: {
     width: '48%',
-    marginBottom: spacing.md,
+    marginBottom: 16,
   },
   imageContainer: {
     aspectRatio: 1,
-    borderRadius: layout.borderRadius,
+    backgroundColor: '#fff',
+    borderRadius: 8,
     overflow: 'hidden',
-    backgroundColor: colors.gray.light,
-    ...layout.shadow,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
   },
   image: {
     width: '100%',
     height: '100%',
   },
   imageTitle: {
-    ...typography.caption,
-    marginTop: spacing.xs,
+    fontSize: 14,
     textAlign: 'center',
+    marginTop: 8,
+    color: '#333',
   },
 }); 

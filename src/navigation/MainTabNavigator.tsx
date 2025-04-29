@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MainTabParamList } from '../types/navigation';
 import { HomeScreen } from '../screens/HomeScreen';
-import { DrawScreen } from '../screens/DrawScreen';
+import { CreateScreen } from '../screens/CreateScreen';
 import { MyGalleryScreen } from '../screens/MyGalleryScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { Ionicons } from '@expo/vector-icons';
@@ -46,7 +46,7 @@ export const MainTabNavigator = () => {
       />
       <Tab.Screen 
         name="Draw" 
-        component={DrawScreen} 
+        component={CreateScreen} 
         options={{ title: '제작' }}
       />
       <Tab.Screen 
