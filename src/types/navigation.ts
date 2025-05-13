@@ -32,6 +32,9 @@ export type RootStackParamList = {
       image: any;
     };
   };
+  StoryPlayer: {
+    story: any;
+  };
 };
 
 export type MainTabParamList = {
