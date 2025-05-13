@@ -3,14 +3,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { ImageProvider } from './src/context/ImageContext';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StoryProvider } from './src/contexts/StoryContext';
 
 export default function App() {
   return (
     <SafeAreaProvider>
       <ImageProvider>
-        <NavigationContainer>
-          <AppNavigator />
-        </NavigationContainer>
+        <StoryProvider>
+          <NavigationContainer>
+            <AppNavigator />
+          </NavigationContainer>
+        </StoryProvider>
       </ImageProvider>
     </SafeAreaProvider>
   );

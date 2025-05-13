@@ -1,25 +1,14 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import { CreateScreen } from '../screens/CreateScreen';
 import { Ionicons } from '@expo/vector-icons';
+import { HomeScreen } from '../screens/HomeScreen';
+import { CreateScreen } from '../screens/CreateScreen';
+import { GalleryScreen } from '../screens/GalleryScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
+// import LinearGradient from 'react-native-linear-gradient'; // Expo에서는 사용하지 않음
+import { TouchableOpacity, Image, View, Text } from 'react-native';
 
 const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
-
-const CreateStack = () => {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen 
-        name="Create" 
-        component={CreateScreen}
-        options={{ 
-          headerShown: false
-        }}
-      />
-    </Stack.Navigator>
-  );
-};
 
 export const AppNavigator = () => {
   return (
@@ -36,7 +25,7 @@ export const AppNavigator = () => {
     >
       <Tab.Screen 
         name="홈" 
-        component={CreateStack}
+        component={HomeScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
@@ -45,7 +34,7 @@ export const AppNavigator = () => {
       />
       <Tab.Screen 
         name="제작" 
-        component={CreateStack}
+        component={CreateScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="brush-outline" size={size} color={color} />
@@ -54,7 +43,7 @@ export const AppNavigator = () => {
       />
       <Tab.Screen 
         name="보관함" 
-        component={CreateStack}
+        component={GalleryScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="images-outline" size={size} color={color} />
@@ -63,7 +52,7 @@ export const AppNavigator = () => {
       />
       <Tab.Screen 
         name="설정" 
-        component={CreateStack}
+        component={SettingsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings-outline" size={size} color={color} />
@@ -72,4 +61,6 @@ export const AppNavigator = () => {
       />
     </Tab.Navigator>
   );
-}; 
+};
+
+// 아래 renderItem 예시는 실제로 사용하지 않으므로 삭제합니다. 

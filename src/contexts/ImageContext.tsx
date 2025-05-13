@@ -10,6 +10,8 @@ type Image = {
 type ImageContextType = {
   images: Image[];
   addImage: (image: Image) => void;
+  updateImage: (uri: string, data: Partial<Omit<Image, 'uri'>>) => void;
+  removeImage: (uri: string) => void;
 };
 
 const ImageContext = createContext<ImageContextType | undefined>(undefined);
@@ -21,8 +23,16 @@ export const ImageProvider = ({ children }: { children: React.ReactNode }) => {
     setImages(prev => [image, ...prev]);
   };
 
+  const updateImage = (uri: string, data: Partial<Omit<Image, 'uri'>>) => {
+    setImages(prev => prev.map(img => img.uri === uri ? { ...img, ...data } : img));
+  };
+
+  const removeImage = (uri: string) => {
+    setImages(prev => prev.filter(img => img.uri !== uri));
+  };
+
   return (
-    <ImageContext.Provider value={{ images, addImage }}>
+    <ImageContext.Provider value={{ images, addImage, updateImage, removeImage }}>
       {children}
     </ImageContext.Provider>
   );

@@ -5,14 +5,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { useImages } from '../contexts/ImageContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { images, addImage } = useImages();
+  const { images, addImage, removeImage } = useImages();
   const [modalVisible, setModalVisible] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
@@ -38,6 +40,7 @@ export const HomeScreen = () => {
   };
 
   const handleImagePress = (imageData: { uri: string; title: string; description: string; time: string }) => {
+    if (isEditMode) return;
     navigation.navigate('PictureDetails', {
       imageUri: imageData.uri,
       title: imageData.title,
@@ -46,19 +49,36 @@ export const HomeScreen = () => {
     });
   };
 
+  const handleDelete = (uri: string) => {
+    Alert.alert('삭제 확인', '정말 삭제하시겠어요?', [
+      { text: '취소', style: 'cancel' },
+      { text: '삭제', style: 'destructive', onPress: () => removeImage(uri) },
+    ]);
+  };
+
   const renderItem = ({ item }: { item: { uri: string; title: string; description: string; time: string } }) => (
-    <TouchableOpacity onPress={() => handleImagePress(item)} style={styles.imageWrapper}>
-      <Image source={{ uri: item.uri }} style={styles.image} resizeMode="cover" />
-      <Text style={styles.imageTitle}>{item.title}</Text>
-    </TouchableOpacity>
+    <View style={styles.imageWrapper}>
+      <TouchableOpacity onPress={() => handleImagePress(item)} disabled={isEditMode}>
+        <Image source={{ uri: item.uri }} style={styles.image} resizeMode="cover" />
+        <Text style={styles.imageTitle}>{item.title}</Text>
+      </TouchableOpacity>
+      {isEditMode && (
+        <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(item.uri)}>
+          <Ionicons name="remove-circle" size={32} color="#FF8C94" />
+        </TouchableOpacity>
+      )}
+    </View>
   );
 
   return (
     <View style={styles.container}>
-      <View style={styles.textContainer}>
+      <View style={styles.headerRow}>
         <Text style={styles.title}>{"반가워요!\n오늘은 어떤 그림을 그렸나요?"}</Text>
-        <Text style={styles.subtitle}>하단의 +버튼을 눌러 사진을 추가해보세요!</Text>
+        <TouchableOpacity onPress={() => setIsEditMode(e => !e)} style={styles.editBtn}>
+          <Ionicons name="pencil-outline" size={26} color="#7A1FA0" />
+        </TouchableOpacity>
       </View>
+      <Text style={styles.subtitle}>하단의 +버튼을 눌러 사진을 추가해보세요!</Text>
 
       <TouchableOpacity style={styles.button} onPress={openModal}>
         <Text style={styles.buttonText}>+</Text>
@@ -100,12 +120,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  textContainer: {
-    alignSelf: 'stretch',
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 40,
-    paddingBottom: 20,
+    paddingBottom: 0,
     backgroundColor: '#fff',
+  },
+  editBtn: {
+    padding: 8,
+  },
+  textContainer: {
+    display: 'none', // 기존 텍스트는 headerRow로 이동
   },
   title: {
     fontSize: 24,
@@ -120,6 +148,8 @@ const styles = StyleSheet.create({
     color: '#EC913F',
     fontWeight: 'bold',
     textAlign: 'left',
+    paddingHorizontal: 20,
+    marginBottom: 10,
   },
   button: {
     backgroundColor: '#7A1FA0',
@@ -143,11 +173,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 10,
     alignItems: 'center',
+    position: 'relative',
   },
   image: {
-    width: '100%',
+    width: width * 0.4,
     height: width * 0.4,
     borderRadius: 10,
+    backgroundColor: '#f0f0f0',
   },
   imageTitle: {
     fontSize: 18,
@@ -155,6 +187,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#333',
     textAlign: 'center',
+  },
+  deleteBtn: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    zIndex: 10,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#eee',
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
   },
   columnWrapper: {
     justifyContent: 'space-between',

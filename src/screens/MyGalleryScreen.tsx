@@ -1,11 +1,77 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, Alert } from 'react-native';
+import { useStories } from '../contexts/StoryContext';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+
+type RootStackParamList = {
+  StoryDetail: { story: any };
+  StoryPlayer: { story: any };
+};
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const MyGalleryScreen = () => {
+  const { stories, removeStory } = useStories();
+  const navigation = useNavigation<NavigationProp>();
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const handleDelete = (uri: string | null) => {
+    Alert.alert('삭제 확인', '정말 삭제하시겠어요?', [
+      { text: '취소', style: 'cancel' },
+      { text: '삭제', style: 'destructive', onPress: () => removeStory(uri) },
+    ]);
+  };
+
+  const renderItem = ({ item }: { item: any }) => (
+    <LinearGradient
+      colors={['#A18CD1', '#FBC2EB']}
+      style={styles.card}
+    >
+      <View style={styles.leftContent}>
+        <TouchableOpacity style={styles.playBtnBox} onPress={() => navigation.navigate('StoryPlayer', { story: item })}>
+          <View style={styles.playBtnRect}>
+            <Ionicons name="play" size={44} color="#fff" />
+          </View>
+        </TouchableOpacity>
+        <View style={styles.textBox}>
+          <Text style={styles.title}>{item.title}</Text>
+          <Text style={styles.date}>{item.time}</Text>
+        </View>
+        {isEditMode && (
+          <TouchableOpacity style={styles.deleteBtn} onPress={() => handleDelete(item.uri)}>
+            <Ionicons name="remove-circle" size={32} color="#FF8C94" />
+          </TouchableOpacity>
+        )}
+      </View>
+      <Image source={{ uri: item.uri }} style={styles.thumbnail} />
+    </LinearGradient>
+  );
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>보관함</Text>
-      <Text style={styles.subtitle}>나의 작품들을 모아보세요!</Text>
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => Alert.alert('마이페이지로 이동(구현 필요)')}
+          style={styles.headerIconBtn}>
+          <Ionicons name="happy-outline" size={28} color="#7A1FA0" />
+        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.headerTitle}>아이와 함께한 창작의 순간들.</Text>
+          <Text style={styles.headerSubtitle}>이곳에서 창작물을 다시 감상하세요</Text>
+        </View>
+        <TouchableOpacity onPress={() => setIsEditMode(e => !e)} style={styles.headerIconBtn}>
+          <Ionicons name="pencil-outline" size={26} color="#7A1FA0" />
+        </TouchableOpacity>
+      </View>
+      <FlatList
+        data={stories}
+        renderItem={renderItem}
+        keyExtractor={(_, index) => index.toString()}
+        contentContainerStyle={styles.listContainer}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 };
@@ -13,19 +79,94 @@ export const MyGalleryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#F7F6FB',
+  },
+  headerRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: 20,
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 12,
+    backgroundColor: 'transparent',
+  },
+  headerIconBtn: {
+    padding: 8,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#7A1FA0',
+    marginBottom: 2,
+  },
+  headerSubtitle: {
+    fontSize: 13,
+    color: '#666',
+    lineHeight: 18,
+  },
+  listContainer: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 24,
+    marginBottom: 22,
+    padding: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.10,
+    shadowRadius: 8,
+    elevation: 3,
+    minHeight: 160,
+    width: '100%',
+  },
+  leftContent: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginRight: 18,
+  },
+  playBtnBox: {
+    marginBottom: 16,
+  },
+  playBtnRect: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    borderWidth: 2,
+    borderColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textBox: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginBottom: 8,
   },
   title: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
+    color: '#fff',
     marginBottom: 10,
-    textAlign: 'center',
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
+  date: {
+    fontSize: 18,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  thumbnail: {
+    width: 110,
+    height: 110,
+    borderRadius: 16,
+    backgroundColor: '#fff',
+    borderWidth: 3,
+    borderColor: '#fff',
+    marginLeft: 8,
+  },
+  deleteBtn: {
+    marginTop: 8,
   },
 }); 
