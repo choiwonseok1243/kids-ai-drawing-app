@@ -40,7 +40,10 @@ export const UploadPictureScreen = () => {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.container}
+        style={styles.scrollView}
+      >
         <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
         <Text style={styles.label}>제목</Text>
         <TextInput
@@ -73,8 +76,13 @@ export const UploadPictureScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     padding: 20,
+    paddingBottom: 50,
     backgroundColor: '#fff',
     alignItems: 'center',
   },
