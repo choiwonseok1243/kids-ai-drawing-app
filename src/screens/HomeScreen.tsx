@@ -221,6 +221,7 @@ export const HomeScreen = () => {
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
         columnWrapperStyle={styles.columnWrapper}
+        contentContainerStyle={styles.listContentContainer}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
@@ -238,11 +239,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     padding: 10,
-    paddingTop: 40,
+    paddingTop: 5,
     backgroundColor: '#fff',
   },
   textContainer: {
-    width: '100%',
+    width: '95%',
     paddingHorizontal: 10,
     marginBottom: 20,
   },
@@ -313,13 +314,22 @@ const styles = StyleSheet.create({
     height: 40,
   },
   imageWrapper: {
-    width: width * 0.42,
-    marginBottom: 20,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 20,
-    padding: 10,
+    width: width * 0.41,
+    marginBottom: 10,
+    marginRight: 13,
+    backgroundColor: '#ffffff',
+    borderRadius: 15,
+    padding: 8,
     alignItems: 'center',
-    aspectRatio: 0.8,
+    aspectRatio: 0.77,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 3,
   },
   image: {
     width: '100%',
@@ -328,20 +338,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   imageTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontWeight: '600',
     marginTop: 8,
+    marginBottom: 2,
     color: '#333',
     textAlign: 'center',
+    paddingHorizontal: 5,
   },
   imageDate: {
-    fontSize: 12,
+    fontSize: 11,
     color: '#666',
-    marginTop: 4,
+    marginBottom: 4,
   },
   columnWrapper: {
-    justifyContent: 'space-between',
-    marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginBottom: 15,
+    width: '100%',
   },
   emptyContainer: {
     flex: 1,
@@ -410,5 +424,8 @@ const styles = StyleSheet.create({
   selectedSortOption: {
     color: '#7A1FA0',
     fontWeight: 'bold',
+  },
+  listContentContainer: {
+    paddingHorizontal: 15,
   },
 });
