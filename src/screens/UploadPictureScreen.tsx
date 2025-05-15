@@ -11,9 +11,11 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  Keyboard
+  Keyboard,
+  Modal
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 export const UploadPictureScreen = () => {
   const navigation = useNavigation();
@@ -25,11 +27,26 @@ export const UploadPictureScreen = () => {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [time, setTime] = useState('');
+  const [date, setDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (event.type === 'set' && selectedDate) {
+      setDate(selectedDate);
+    }
+    setShowDatePicker(false);
+  };
 
   const handleUpload = () => {
-    if (!title.trim() || !description.trim() || !time.trim()) {
-      Alert.alert('알림', '제목, 내용, 시간을 모두 입력해주세요!');
+    if (!title.trim() || !description.trim()) {
+      Alert.alert('알림', '제목과 내용을 모두 입력해주세요!');
       return;
     }
 
@@ -37,7 +54,7 @@ export const UploadPictureScreen = () => {
       uri: imageUri,
       title,
       description,
-      time,
+      time: formatDate(date),
     });
 
     Alert.alert('업로드 완료', '사진이 성공적으로 업로드되었습니다!', [
@@ -46,6 +63,62 @@ export const UploadPictureScreen = () => {
         onPress: () => navigation.goBack(),
       },
     ]);
+  };
+
+  const showPicker = () => {
+    setShowDatePicker(true);
+  };
+
+  const renderDatePicker = () => {
+    if (Platform.OS === 'android') {
+      if (showDatePicker) {
+        return (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode="date"
+            is24Hour={true}
+            onChange={handleDateChange}
+          />
+        );
+      }
+      return null;
+    }
+
+    return (
+      <Modal
+        transparent={true}
+        visible={showDatePicker}
+        animationType="slide"
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.pickerHeader}>
+              <TouchableOpacity 
+                onPress={() => setShowDatePicker(false)}
+                style={styles.pickerButton}
+              >
+                <Text style={styles.pickerButtonText}>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={() => setShowDatePicker(false)}
+                style={styles.pickerButton}
+              >
+                <Text style={[styles.pickerButtonText, { color: '#7A1FA0' }]}>확인</Text>
+              </TouchableOpacity>
+            </View>
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+              style={styles.datePickerIOS}
+            />
+          </View>
+        </View>
+      </Modal>
+    );
   };
 
   return (
@@ -90,13 +163,15 @@ export const UploadPictureScreen = () => {
               returnKeyType="next"
             />
             <Text style={styles.label}>날짜</Text>
-            <TextInput
-              placeholder="예: 2025-04-29"
-              value={time}
-              onChangeText={setTime}
-              style={styles.input}
-              returnKeyType="done"
-            />
+            <TouchableOpacity 
+              style={[styles.input, styles.dateInput]} 
+              onPress={showPicker}
+            >
+              <Text style={styles.dateText}>{formatDate(date)}</Text>
+            </TouchableOpacity>
+
+            {renderDatePicker()}
+
             <View style={styles.buttonContainer}>
               <TouchableOpacity 
                 style={styles.uploadButton}
@@ -109,7 +184,7 @@ export const UploadPictureScreen = () => {
           </View>
           <View style={[
             styles.bottomPadding,
-            Platform.OS === 'android' && { height: 80 }  // Android에서 하단 여백 증가
+            Platform.OS === 'android' && { height: 80 }
           ]} />
         </ScrollView>
       </TouchableWithoutFeedback>
@@ -169,6 +244,13 @@ const styles = StyleSheet.create({
     height: 150,
     textAlignVertical: 'top',
   },
+  dateInput: {
+    justifyContent: 'center',
+  },
+  dateText: {
+    color: '#333',
+    fontSize: 16,
+  },
   buttonContainer: {
     width: '100%',
     marginBottom: 20,
@@ -196,6 +278,35 @@ const styles = StyleSheet.create({
   },
   bottomPadding: {
     height: 50,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingBottom: 20,
+  },
+  pickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  pickerButton: {
+    padding: 8,
+  },
+  pickerButtonText: {
+    fontSize: 16,
+    color: '#666',
+  },
+  datePickerIOS: {
+    height: 200,
   },
 });
 

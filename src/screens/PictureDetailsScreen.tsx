@@ -5,6 +5,7 @@ import { RootStackParamList } from '../types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 type PictureDetailsRouteProp = RouteProp<RootStackParamList, 'PictureDetails'>;
 type PictureDetailsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -18,7 +19,29 @@ export const PictureDetailsScreen = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(initialTitle);
   const [description, setDescription] = useState(initialDescription);
-  const [time, setTime] = useState(initialTime);
+  const [date, setDate] = useState(() => {
+    const [year, month, day] = initialTime.split('-').map(Number);
+    return new Date(year, month - 1, day);
+  });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleDateChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    if (event.type === 'set' && selectedDate) {
+      setDate(selectedDate);
+    }
+    setShowDatePicker(false);
+  };
+
+  const showPicker = () => {
+    setShowDatePicker(true);
+  };
 
   const handleDelete = async () => {
     try {
@@ -51,8 +74,8 @@ export const PictureDetailsScreen = () => {
   };
 
   const handleSave = () => {
-    if (!title.trim() || !description.trim() || !time.trim()) {
-      Alert.alert('알림', '제목, 내용, 시간을 모두 입력해주세요!');
+    if (!title.trim() || !description.trim()) {
+      Alert.alert('알림', '제목과 내용을 모두 입력해주세요!');
       return;
     }
 
@@ -62,7 +85,7 @@ export const PictureDetailsScreen = () => {
         uri: imageUri,
         title,
         description,
-        time,
+        time: formatDate(date),
       },
       action: 'update'
     });
@@ -71,8 +94,61 @@ export const PictureDetailsScreen = () => {
   const handleCancel = () => {
     setTitle(initialTitle);
     setDescription(initialDescription);
-    setTime(initialTime);
+    const [year, month, day] = initialTime.split('-').map(Number);
+    setDate(new Date(year, month - 1, day));
     setIsEditing(false);
+  };
+
+  const renderDatePicker = () => {
+    if (Platform.OS === 'android') {
+      if (showDatePicker) {
+        return (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode="date"
+            is24Hour={true}
+            onChange={handleDateChange}
+          />
+        );
+      }
+      return null;
+    }
+
+    return (
+      <Modal
+        transparent={true}
+        visible={showDatePicker}
+        animationType="slide"
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <View style={styles.pickerHeader}>
+              <TouchableOpacity 
+                onPress={() => setShowDatePicker(false)}
+                style={styles.pickerButton}
+              >
+                <Text style={styles.pickerButtonText}>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={() => setShowDatePicker(false)}
+                style={styles.pickerButton}
+              >
+                <Text style={[styles.pickerButtonText, { color: '#7A1FA0' }]}>확인</Text>
+              </TouchableOpacity>
+            </View>
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode="date"
+              display="spinner"
+              onChange={handleDateChange}
+              style={styles.datePickerIOS}
+            />
+          </View>
+        </View>
+      </Modal>
+    );
   };
 
   return (
@@ -147,7 +223,7 @@ export const PictureDetailsScreen = () => {
             {/* 이미지 카드 */}
             <View style={styles.imageCard}>
               <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
-              <Text style={styles.dateText}>{time}</Text>
+              <Text style={styles.dateText}>{formatDate(date)}</Text>
             </View>
 
             {/* 텍스트 내용 */}
@@ -171,13 +247,14 @@ export const PictureDetailsScreen = () => {
                     textAlignVertical="top"
                     returnKeyType="next"
                   />
-                  <TextInput
-                    value={time}
-                    onChangeText={setTime}
-                    style={styles.timeInput}
-                    placeholder="날짜를 입력하세요 (예: 2025-04-29)"
-                    returnKeyType="done"
-                  />
+                  <TouchableOpacity 
+                    style={styles.dateButton}
+                    onPress={showPicker}
+                  >
+                    <Text style={styles.dateButtonText}>날짜 선택: {formatDate(date)}</Text>
+                  </TouchableOpacity>
+
+                  {renderDatePicker()}
                 </>
               ) : (
                 <>
@@ -369,15 +446,38 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginBottom: 10,
   },
-  timeInput: {
-    fontSize: 14,
-    color: '#666',
-    width: '100%',
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
+  dateButton: {
+    backgroundColor: '#f0f0f0',
+    padding: 15,
     borderRadius: 8,
-    backgroundColor: '#fff',
     marginTop: 10,
+    alignItems: 'center',
+  },
+  dateButtonText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  pickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  pickerButton: {
+    padding: 8,
+  },
+  pickerButtonText: {
+    fontSize: 16,
+    color: '#666',
+  },
+  datePickerIOS: {
+    height: 200,
   },
 });
