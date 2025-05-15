@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Image, StyleSheet, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  Button, 
+  Image, 
+  StyleSheet, 
+  KeyboardAvoidingView, 
+  Platform, 
+  Alert, 
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
 export const UploadPictureScreen = () => {
@@ -12,7 +25,7 @@ export const UploadPictureScreen = () => {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [time, setTime] = useState(''); // 시간 입력 추가
+  const [time, setTime] = useState('');
 
   const handleUpload = () => {
     if (!title.trim() || !description.trim() || !time.trim()) {
@@ -37,60 +50,78 @@ export const UploadPictureScreen = () => {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 80}
     >
-      <ScrollView 
-        contentContainerStyle={styles.container}
-        style={styles.scrollView}
-      >
-        <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
-        <Text style={styles.label}>제목</Text>
-        <TextInput
-          placeholder="제목을 입력하세요"
-          value={title}
-          onChangeText={setTitle}
-          style={styles.input}
-        />
-        <Text style={styles.label}>내용</Text>
-        <TextInput
-          placeholder="내용을 입력하세요"
-          value={description}
-          onChangeText={setDescription}
-          style={[styles.input, { height: 100 }]}
-          multiline
-        />
-        <Text style={styles.label}>날짜</Text>
-        <TextInput
-          placeholder="예: 2025-04-29"
-          value={time}
-          onChangeText={setTime}
-          style={styles.input}
-        />
-        <View style={styles.buttonContainer}>
-          <Button title="업로드" onPress={handleUpload} color="#7A1FA0" />
-        </View>
-      </ScrollView>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView 
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          bounces={true}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+          <View style={styles.formContainer}>
+            <Text style={styles.label}>제목</Text>
+            <TextInput
+              placeholder="제목을 입력하세요"
+              value={title}
+              onChangeText={setTitle}
+              style={styles.input}
+              returnKeyType="next"
+            />
+            <Text style={styles.label}>내용</Text>
+            <TextInput
+              placeholder="내용을 입력하세요"
+              value={description}
+              onChangeText={setDescription}
+              style={[styles.input, styles.descriptionInput]}
+              multiline
+              textAlignVertical="top"
+              returnKeyType="next"
+            />
+            <Text style={styles.label}>날짜</Text>
+            <TextInput
+              placeholder="예: 2025-04-29"
+              value={time}
+              onChangeText={setTime}
+              style={styles.input}
+              returnKeyType="done"
+            />
+            <View style={styles.buttonContainer}>
+              <Button title="업로드" onPress={handleUpload} color="#7A1FA0" />
+            </View>
+          </View>
+          <View style={styles.bottomPadding} />
+        </ScrollView>
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
+  container: {
     flex: 1,
     backgroundColor: '#fff',
   },
-  container: {
-    padding: 20,
-    paddingBottom: 50,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+  },
+  formContainer: {
+    width: '100%',
+    alignItems: 'stretch',
   },
   image: {
     width: '100%',
     height: 300,
     borderRadius: 15,
-    marginBottom: 20,
+    marginVertical: 20,
     backgroundColor: '#eee',
   },
   label: {
@@ -110,9 +141,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: '#fafafa',
   },
+  descriptionInput: {
+    height: 150,
+    textAlignVertical: 'top',
+  },
   buttonContainer: {
     width: '100%',
+    marginBottom: 20,
     marginTop: 10,
     borderRadius: 10,
   },
+  bottomPadding: {
+    height: 50,
+  },
 });
+
+

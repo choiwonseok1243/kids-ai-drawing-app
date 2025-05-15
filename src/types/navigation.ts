@@ -5,7 +5,13 @@ export type RootStackParamList = {
   Settings: undefined;
   Home: {
     deletedImageUri?: string;
-    action?: string;
+    updatedImageData?: {
+      uri: string;
+      title: string;
+      description: string;
+      time: string;
+    };
+    action?: 'delete' | 'update';
   } | undefined;
   UploadPicture: {
     imageUri: string;

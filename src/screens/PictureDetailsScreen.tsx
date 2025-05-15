@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Modal, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Modal, Alert, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../types/navigation';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -12,9 +12,13 @@ type PictureDetailsNavigationProp = NativeStackNavigationProp<RootStackParamList
 export const PictureDetailsScreen = () => {
   const route = useRoute<PictureDetailsRouteProp>();
   const navigation = useNavigation<PictureDetailsNavigationProp>();
-  const { imageUri, title, description, time } = route.params;
+  const { imageUri, title: initialTitle, description: initialDescription, time: initialTime } = route.params;
 
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(initialTitle);
+  const [description, setDescription] = useState(initialDescription);
+  const [time, setTime] = useState(initialTime);
 
   const handleDelete = async () => {
     try {
@@ -40,6 +44,35 @@ export const PictureDetailsScreen = () => {
       Alert.alert('오류', '파일을 삭제하는 중에 문제가 발생했습니다.');
       setDeleteModalVisible(false);
     }
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    if (!title.trim() || !description.trim() || !time.trim()) {
+      Alert.alert('알림', '제목, 내용, 시간을 모두 입력해주세요!');
+      return;
+    }
+
+    // Navigate back to Home with updated data
+    navigation.navigate('Home', {
+      updatedImageData: {
+        uri: imageUri,
+        title,
+        description,
+        time,
+      },
+      action: 'update'
+    });
+  };
+
+  const handleCancel = () => {
+    setTitle(initialTitle);
+    setDescription(initialDescription);
+    setTime(initialTime);
+    setIsEditing(false);
   };
 
   return (
@@ -78,27 +111,86 @@ export const PictureDetailsScreen = () => {
             <MaterialIcons name="delete" size={24} color="#FF5C5C" />
             <Text style={[styles.headerButtonText, { color: '#FF5C5C' }]}>삭제</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerButton}>
-            <MaterialIcons name="edit" size={24} color="#32CD32" />
-            <Text style={[styles.headerButtonText, { color: '#32CD32' }]}>수정</Text>
-          </TouchableOpacity>
+          {isEditing ? (
+            <>
+              <TouchableOpacity style={styles.headerButton} onPress={handleCancel}>
+                <MaterialIcons name="close" size={24} color="#666" />
+                <Text style={[styles.headerButtonText, { color: '#666' }]}>취소</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.headerButton} onPress={handleSave}>
+                <MaterialIcons name="check" size={24} color="#32CD32" />
+                <Text style={[styles.headerButtonText, { color: '#32CD32' }]}>저장</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <TouchableOpacity style={styles.headerButton} onPress={handleEdit}>
+              <MaterialIcons name="edit" size={24} color="#32CD32" />
+              <Text style={[styles.headerButtonText, { color: '#32CD32' }]}>수정</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* 이미지 카드 */}
-        <View style={styles.imageCard}>
-          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
-          <Text style={styles.dateText}>{time}</Text>
-        </View>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={styles.keyboardAvoidingView}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 80}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView 
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            bounces={true}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* 이미지 카드 */}
+            <View style={styles.imageCard}>
+              <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+              <Text style={styles.dateText}>{time}</Text>
+            </View>
 
-        {/* 텍스트 내용 */}
-        <View style={styles.contentBox}>
-          <Text style={styles.title}>{title}</Text>
-          <View style={styles.separator} />
-          <Text style={styles.description}>{description}</Text>
-        </View>
-      </ScrollView>
+            {/* 텍스트 내용 */}
+            <View style={styles.contentBox}>
+              {isEditing ? (
+                <>
+                  <TextInput
+                    value={title}
+                    onChangeText={setTitle}
+                    style={styles.titleInput}
+                    placeholder="제목을 입력하세요"
+                    returnKeyType="next"
+                  />
+                  <View style={styles.separator} />
+                  <TextInput
+                    value={description}
+                    onChangeText={setDescription}
+                    style={styles.descriptionInput}
+                    multiline
+                    placeholder="내용을 입력하세요"
+                    textAlignVertical="top"
+                    returnKeyType="next"
+                  />
+                  <TextInput
+                    value={time}
+                    onChangeText={setTime}
+                    style={styles.timeInput}
+                    placeholder="날짜를 입력하세요 (예: 2025-04-29)"
+                    returnKeyType="done"
+                  />
+                </>
+              ) : (
+                <>
+                  <Text style={styles.title}>{title}</Text>
+                  <View style={styles.separator} />
+                  <Text style={styles.description}>{description}</Text>
+                </>
+              )}
+            </View>
+            <View style={styles.bottomPadding} />
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
@@ -108,8 +200,19 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFF',
   },
+  keyboardAvoidingView: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: '#FFF',
+  },
   scrollContent: {
-    paddingBottom: 20,
+    flexGrow: 1,
+    paddingBottom: 30,
+  },
+  bottomPadding: {
+    height: 50, // 하단 여백 추가
   },
   header: {
     flexDirection: 'row',
@@ -120,6 +223,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#eee',
     backgroundColor: '#fff',
+    zIndex: 1, // 헤더가 항상 위에 보이도록
   },
   headerButton: {
     flexDirection: 'row',
@@ -166,6 +270,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
+    minHeight: 200, // 최소 높이 설정
   },
   title: {
     fontSize: 24,
@@ -236,5 +341,41 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
     fontWeight: 'bold',
+  },
+  titleInput: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 10,
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+  },
+  descriptionInput: {
+    fontSize: 16,
+    color: '#666',
+    lineHeight: 24,
+    width: '100%',
+    minHeight: 150, // 내용 입력 영역 높이 증가
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    marginBottom: 10,
+  },
+  timeInput: {
+    fontSize: 14,
+    color: '#666',
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    marginTop: 10,
   },
 });
