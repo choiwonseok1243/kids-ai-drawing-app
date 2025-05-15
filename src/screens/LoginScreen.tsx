@@ -71,7 +71,7 @@ export const LoginScreen = () => {
               <View style={styles.contentContainer}>
                 <View style={styles.logoContainer}>
                   <Text style={styles.logo}>KINO</Text>
-                  <Text style={styles.subtitle}>당신의 그림을 기록하세요</Text>
+                  <Text style={styles.subtitle}>그림으로 펼쳐지는 우리들의 이야기</Text>
                 </View>
 
                 <View style={styles.formContainer}>

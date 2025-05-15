@@ -81,7 +81,7 @@ export const RegisterScreen = () => {
               <View style={styles.contentContainer}>
                 <View style={styles.headerContainer}>
                   <Text style={styles.title}>회원가입</Text>
-                  <Text style={styles.subtitle}>KINO의 회원이 되어주세요</Text>
+                  <Text style={styles.subtitle}>KINO와 함께 상상을 현실로</Text>
                 </View>
 
                 <View style={styles.formContainer}>
