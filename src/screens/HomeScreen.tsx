@@ -1,13 +1,17 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Alert, FlatList, Modal } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Alert, FlatList, Modal, Platform } from 'react-native';
 import { useNavigation, useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { Picker } from '@react-native-picker/picker';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
 type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
+
+type SortOption = 'latest' | 'oldest' | 'title';
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -15,6 +19,22 @@ export const HomeScreen = () => {
   const [selectedImages, setSelectedImages] = useState<{ uri: string; title: string; description: string; time: string }[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
+  const [sortOption, setSortOption] = useState<SortOption>('latest');
+  const [showSortPicker, setShowSortPicker] = useState(false);
+
+  const sortImages = useCallback((images: typeof selectedImages, option: SortOption) => {
+    const sorted = [...images];
+    switch (option) {
+      case 'latest':
+        return sorted.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+      case 'oldest':
+        return sorted.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+      case 'title':
+        return sorted.sort((a, b) => a.title.localeCompare(b.title, 'ko'));
+      default:
+        return sorted;
+    }
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
@@ -22,19 +42,28 @@ export const HomeScreen = () => {
         const { deletedImageUri, updatedImageData, action } = route.params;
         
         if (action === 'delete' && deletedImageUri) {
-          setSelectedImages(prev => prev.filter(img => img.uri !== deletedImageUri));
+          setSelectedImages(prev => sortImages(prev.filter(img => img.uri !== deletedImageUri), sortOption));
           navigation.setParams({ deletedImageUri: undefined, action: undefined });
         } else if (action === 'update' && updatedImageData) {
           setSelectedImages(prev => 
-            prev.map(img => 
-              img.uri === updatedImageData.uri ? updatedImageData : img
+            sortImages(
+              prev.map(img => img.uri === updatedImageData.uri ? updatedImageData : img),
+              sortOption
             )
           );
           navigation.setParams({ updatedImageData: undefined, action: undefined });
         }
       }
-    }, [route.params])
+    }, [route.params, sortOption])
   );
+
+  const handleSortChange = (option: SortOption) => {
+    setSortOption(option);
+    setSelectedImages(prev => sortImages(prev, option));
+    if (Platform.OS === 'android') {
+      setShowSortPicker(false);
+    }
+  };
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
@@ -48,11 +77,11 @@ export const HomeScreen = () => {
 
     if (!result.canceled) {
       const newImageUri = result.assets[0].uri;
-      setPendingImageUri(newImageUri); // 일단 임시 저장
+      setPendingImageUri(newImageUri);
       closeModal();
       navigation.navigate('UploadPicture', {
         imageUri: newImageUri,
-        onUpload: handleUploadFromUploadScreen, // 고정된 핸들러 넘기기
+        onUpload: handleUploadFromUploadScreen,
       });
     } else {
       Alert.alert('이미지 선택이 취소되었습니다');
@@ -60,7 +89,7 @@ export const HomeScreen = () => {
   };
 
   const handleUploadFromUploadScreen = (newData: { uri: string; title: string; description: string; time: string }) => {
-    setSelectedImages(prev => [newData, ...prev]);
+    setSelectedImages(prev => sortImages([newData, ...prev], sortOption));
   };
 
   const handleImagePress = (imageData: { uri: string; title: string; description: string; time: string }) => {
@@ -76,6 +105,7 @@ export const HomeScreen = () => {
     <TouchableOpacity onPress={() => handleImagePress(item)} style={styles.imageWrapper}>
       <Image source={{ uri: item.uri }} style={styles.image} resizeMode="cover" />
       <Text style={styles.imageTitle}>{item.title}</Text>
+      <Text style={styles.imageDate}>{item.time}</Text>
     </TouchableOpacity>
   );
 
@@ -90,7 +120,33 @@ export const HomeScreen = () => {
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
 
-      {/* 모달 */}
+      <View style={styles.sortContainer}>
+        {Platform.OS === 'android' ? (
+          <TouchableOpacity 
+            style={styles.sortButton} 
+            onPress={() => setShowSortPicker(true)}
+          >
+            <Text style={styles.sortButtonText}>
+              {sortOption === 'latest' ? '최신순' : 
+                    sortOption === 'oldest' ? '오래된순' : '제목순'}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={sortOption}
+              onValueChange={handleSortChange}
+              style={styles.sortPicker}
+            >
+              <Picker.Item label="최신순" value="latest" />
+              <Picker.Item label="오래된순" value="oldest" />
+              <Picker.Item label="제목순" value="title" />
+            </Picker>
+          </View>
+        )}
+      </View>
+
+      {/* 이미지 선택 모달 */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -110,6 +166,55 @@ export const HomeScreen = () => {
         </View>
       </Modal>
 
+      {/* Android 정렬 옵션 모달 */}
+      {Platform.OS === 'android' && showSortPicker && (
+        <Modal
+          transparent={true}
+          visible={showSortPicker}
+          animationType="fade"
+          onRequestClose={() => setShowSortPicker(false)}
+        >
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.modalTitle}>정렬 방식</Text>
+              <TouchableOpacity 
+                style={styles.sortOption} 
+                onPress={() => handleSortChange('latest')}
+              >
+                <Text style={[
+                  styles.sortOptionText,
+                  sortOption === 'latest' && styles.selectedSortOption
+                ]}>최신순</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.sortOption}
+                onPress={() => handleSortChange('oldest')}
+              >
+                <Text style={[
+                  styles.sortOptionText,
+                  sortOption === 'oldest' && styles.selectedSortOption
+                ]}>오래된순</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.sortOption}
+                onPress={() => handleSortChange('title')}
+              >
+                <Text style={[
+                  styles.sortOptionText,
+                  sortOption === 'title' && styles.selectedSortOption
+                ]}>제목순</Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.modalCancel}
+                onPress={() => setShowSortPicker(false)}
+              >
+                <Text style={styles.modalCancelText}>닫기</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      )}
+
       <FlatList
         data={selectedImages}
         renderItem={renderItem}
@@ -117,6 +222,11 @@ export const HomeScreen = () => {
         numColumns={2}
         columnWrapperStyle={styles.columnWrapper}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>아직 업로드된 이미지가 없습니다.</Text>
+          </View>
+        }
       />
     </View>
   );
@@ -132,8 +242,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   textContainer: {
-    alignSelf: 'stretch',
-    paddingHorizontal: 20,
+    width: '100%',
+    paddingHorizontal: 10,
+    marginBottom: 20,
   },
   title: {
     fontSize: 24,
@@ -148,7 +259,6 @@ const styles = StyleSheet.create({
     color: '#EC913F',
     fontWeight: 'bold',
     textAlign: 'left',
-    marginBottom: 20,
   },
   button: {
     backgroundColor: '#7A1FA0',
@@ -156,13 +266,51 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 10,
     width: '90%',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   buttonText: {
     color: '#fff',
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  sortContainer: {
+    width: '95%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginTop: 6,
+    paddingHorizontal: 10,
+  },
+  sortButton: {
+    backgroundColor: '#f0f0f0',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  sortButtonText: {
+    color: '#7A1FA0',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  pickerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    paddingLeft: 10,
+  },
+  pickerLabel: {
+    color: '#7A1FA0',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  sortPicker: {
+    width: 120,
+    height: 40,
   },
   imageWrapper: {
     width: width * 0.42,
@@ -180,15 +328,31 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   imageTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginTop: 10,
+    marginTop: 8,
     color: '#333',
     textAlign: 'center',
+  },
+  imageDate: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
   },
   columnWrapper: {
     justifyContent: 'space-between',
     marginBottom: 20,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+  },
+  emptyText: {
+    color: '#666',
+    fontSize: 16,
+    textAlign: 'center',
   },
   modalBackground: {
     flex: 1,
@@ -207,7 +371,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-    marginTop: 5
+    color: '#333',
   },
   modalButton: {
     backgroundColor: '#7A1FA0',
@@ -225,9 +389,26 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
+    marginTop: 10,
   },
   modalCancelText: {
     color: '#333',
+    fontWeight: 'bold',
+  },
+  sortOption: {
+    width: '100%',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  sortOptionText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+  },
+  selectedSortOption: {
+    color: '#7A1FA0',
     fontWeight: 'bold',
   },
 });
