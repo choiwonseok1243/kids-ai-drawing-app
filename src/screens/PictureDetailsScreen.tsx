@@ -31,6 +31,13 @@ export const PictureDetailsScreen = () => {
     });
   }, [navigation]);
 
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: '확인해보기',
+      headerBackTitle: '돌아가기',
+    });
+  }, [navigation]);
+
   const handleSave = () => {
     if (!editTitle.trim() || !editDescription.trim() || !editTime.trim()) {
       Alert.alert('알림', '제목, 내용, 날짜를 모두 입력해주세요!');

@@ -6,10 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { useImages } from '../contexts/ImageContext';
 import { Ionicons } from '@expo/vector-icons';
-<<<<<<< HEAD
 import SearchBar from '../components/SearchBar';
-=======
->>>>>>> f4729b6 (feat: 업로드 탭 썸네일 표시 문제 해결 및 UI/UX 개선)
 
 const { width } = Dimensions.get('window');
 
@@ -19,12 +16,9 @@ export const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
-<<<<<<< HEAD
   const [searchQuery, setSearchQuery] = useState('');
   const [sortType, setSortType] = useState<'latest' | 'oldest' | 'title'>('latest');
   const [sortModalVisible, setSortModalVisible] = useState(false);
-=======
->>>>>>> f4729b6 (feat: 업로드 탭 썸네일 표시 문제 해결 및 UI/UX 개선)
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
@@ -66,7 +60,6 @@ export const HomeScreen = () => {
     ]);
   };
 
-<<<<<<< HEAD
   const filteredImages = images.filter(image => 
     image.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     image.description.toLowerCase().includes(searchQuery.toLowerCase())
@@ -85,8 +78,6 @@ export const HomeScreen = () => {
     }
   }, [filteredImages, sortType]);
 
-=======
->>>>>>> f4729b6 (feat: 업로드 탭 썸네일 표시 문제 해결 및 UI/UX 개선)
   const renderItem = ({ item }: { item: { uri: string; title: string; description: string; time: string } }) => (
     <View style={styles.imageWrapper}>
       <TouchableOpacity onPress={() => handleImagePress(item)} disabled={isEditMode}>
@@ -108,7 +99,6 @@ export const HomeScreen = () => {
         <TouchableOpacity onPress={() => setIsEditMode(e => !e)} style={styles.editBtn}>
           <Ionicons name="pencil-outline" size={26} color="#7A1FA0" />
         </TouchableOpacity>
-<<<<<<< HEAD
       </View>
       <Text style={styles.subtitle}>하단의 +버튼을 눌러 사진을 추가해보세요!</Text>
 
@@ -121,8 +111,6 @@ export const HomeScreen = () => {
           onChangeText={setSearchQuery}
           placeholder="제목으로 검색해주세요 !"
         />
-=======
->>>>>>> f4729b6 (feat: 업로드 탭 썸네일 표시 문제 해결 및 UI/UX 개선)
       </View>
       <Text style={styles.subtitle}>하단의 +버튼을 눌러 사진을 추가해보세요!</Text>
 
@@ -205,15 +193,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
-<<<<<<< HEAD
     paddingTop: 20,
     marginBottom: 0,
     minHeight: 40,
-=======
-    paddingTop: 40,
-    paddingBottom: 0,
-    backgroundColor: '#fff',
->>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
   },
   editBtn: {
     padding: 8,
@@ -241,8 +223,6 @@ const styles = StyleSheet.create({
     color: '#EC913F',
     fontWeight: 'bold',
     textAlign: 'left',
-<<<<<<< HEAD
-<<<<<<< HEAD
     paddingHorizontal: 20,
     marginBottom: 10,
     marginTop: 4,
@@ -253,30 +233,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     marginBottom: 10,
-=======
->>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
-=======
-    paddingHorizontal: 20,
-    marginBottom: 10,
->>>>>>> f4729b6 (feat: 업로드 탭 썸네일 표시 문제 해결 및 UI/UX 개선)
   },
   button: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: '#7A1FA0',
-<<<<<<< HEAD
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
-=======
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 10,
-    width: '90%',
-    marginBottom: 20,
-    alignSelf: 'center',
->>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
   },
   buttonText: {
     color: '#fff',
@@ -288,7 +253,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   imageWrapper: {
-<<<<<<< HEAD
     width: (width - 40) / 2,
     marginBottom: 20,
     position: 'relative',
@@ -297,24 +261,6 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1,
     borderRadius: 12,
-=======
-    width: width * 0.46,
-    marginBottom: 12,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 20,
-    padding: 10,
-    alignItems: 'center',
-    position: 'relative',
-  },
-  image: {
-    width: width * 0.4,
-    height: width * 0.4,
-    borderRadius: 10,
-<<<<<<< HEAD
->>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
-=======
-    backgroundColor: '#f0f0f0',
->>>>>>> f4729b6 (feat: 업로드 탭 썸네일 표시 문제 해결 및 UI/UX 개선)
   },
   imageTitle: {
     fontSize: 14,
@@ -323,36 +269,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'BMJUA',
   },
-<<<<<<< HEAD
-<<<<<<< HEAD
   deleteBtn: {
     position: 'absolute',
     top: -10,
     right: -10,
     backgroundColor: '#fff',
     borderRadius: 16,
-=======
-=======
-  deleteBtn: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    zIndex: 10,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#eee',
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 2,
-  },
->>>>>>> f4729b6 (feat: 업로드 탭 썸네일 표시 문제 해결 및 UI/UX 개선)
-  columnWrapper: {
-    justifyContent: 'space-between',
-    paddingHorizontal: 3,
->>>>>>> dd8fff5 (UI 개선: 네비게이션 헤더 제거, 탭바 아이콘 변경(업로드/만나러가기), 탭바 아이콘(26) 및 텍스트(13) 크기 조정)
   },
   modalBackground: {
     flex: 1,

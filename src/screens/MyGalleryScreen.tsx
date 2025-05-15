@@ -77,7 +77,7 @@ export const MyGalleryScreen = () => {
         <SearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
-          placeholder="제목으로 검색해주세요 !"
+          placeholder="제목으로 검색"
           iconColor="#7A1FA0"
           iconSize={26}
         />
