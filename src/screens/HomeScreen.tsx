@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { useImages } from '../contexts/ImageContext';
 import { Ionicons } from '@expo/vector-icons';
+import SearchBar from '../components/SearchBar';
 
 const { width } = Dimensions.get('window');
 
@@ -15,6 +16,7 @@ export const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
@@ -56,6 +58,11 @@ export const HomeScreen = () => {
     ]);
   };
 
+  const filteredImages = images.filter(image => 
+    image.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    image.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const renderItem = ({ item }: { item: { uri: string; title: string; description: string; time: string } }) => (
     <View style={styles.imageWrapper}>
       <TouchableOpacity onPress={() => handleImagePress(item)} disabled={isEditMode}>
@@ -80,9 +87,16 @@ export const HomeScreen = () => {
       </View>
       <Text style={styles.subtitle}>하단의 +버튼을 눌러 사진을 추가해보세요!</Text>
 
-      <TouchableOpacity style={styles.button} onPress={openModal}>
-        <Text style={styles.buttonText}>+</Text>
-      </TouchableOpacity>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={openModal}>
+          <Text style={styles.buttonText}>+</Text>
+        </TouchableOpacity>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="그림 제목이나 설명으로 검색"
+        />
+      </View>
 
       <Modal
         animationType="slide"
@@ -104,7 +118,7 @@ export const HomeScreen = () => {
       </Modal>
 
       <FlatList
-        data={images}
+        data={filteredImages}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
@@ -151,14 +165,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 10,
   },
+  buttonContainer: {
+    width: '90%',
+    alignSelf: 'center',
+    marginBottom: 20,
+  },
   button: {
     backgroundColor: '#7A1FA0',
     paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 10,
-    width: '90%',
-    marginBottom: 20,
-    alignSelf: 'center',
+    marginBottom: 8,
   },
   buttonText: {
     color: '#fff',

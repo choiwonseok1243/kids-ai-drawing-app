@@ -119,7 +119,7 @@ export const CreateDetailScreen = ({ route, navigation }) => {
           {item.image ? (
             <Image source={{ uri: item.image }} style={styles.sceneImage} resizeMode="cover" />
           ) : (
-            <View style={styles.placeholder}><Text style={styles.placeholderText}>AI 장면 미생성</Text></View>
+            <View style={styles.placeholder}><Text style={styles.placeholderText}>이야기 내용을 작성 해주세요!</Text></View>
           )}
         </View>
         <View style={styles.sideBarWrap}>
@@ -336,6 +336,8 @@ const styles = StyleSheet.create({
   placeholderText: {
     fontSize: 16,
     color: '#333',
+    fontFamily: 'System',
+    fontWeight: '500',
   },
   indexRow: {
     flexDirection: 'row',

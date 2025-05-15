@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import SearchBar from '../components/SearchBar';
 
 type RootStackParamList = {
   StoryDetail: { story: any };
@@ -17,6 +18,7 @@ export const MyGalleryScreen = () => {
   const { stories, removeStory } = useStories();
   const navigation = useNavigation<NavigationProp>();
   const [isEditMode, setIsEditMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleDelete = (uri: string | null) => {
     Alert.alert('삭제 확인', '정말 삭제하시겠어요?', [
@@ -24,6 +26,11 @@ export const MyGalleryScreen = () => {
       { text: '삭제', style: 'destructive', onPress: () => removeStory(uri) },
     ]);
   };
+
+  const filteredStories = stories.filter(story =>
+    story.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    story.time.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const renderItem = ({ item }: { item: any }) => (
     <LinearGradient
@@ -57,16 +64,26 @@ export const MyGalleryScreen = () => {
           style={styles.headerIconBtn}>
           <Ionicons name="happy-outline" size={28} color="#7A1FA0" />
         </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.headerTitle}>아이와 함께한 창작의 순간들.</Text>
-          <Text style={styles.headerSubtitle}>이곳에서 창작물을 다시 감상하세요</Text>
-        </View>
+        <View style={{ flex: 1 }} />
         <TouchableOpacity onPress={() => setIsEditMode(e => !e)} style={styles.headerIconBtn}>
           <Ionicons name="pencil-outline" size={26} color="#7A1FA0" />
         </TouchableOpacity>
       </View>
+      <View style={styles.headerTextWrapper}>
+        <Text style={styles.headerTitle}>아이와 함께한 창작의 순간들.</Text>
+        <Text style={styles.headerSubtitle}>이곳에서 창작물을 다시 감상하세요</Text>
+      </View>
+      <View style={styles.searchBarWrapper}>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="제목으로 검색"
+          iconColor="#7A1FA0"
+          iconSize={26}
+        />
+      </View>
       <FlatList
-        data={stories}
+        data={filteredStories}
         renderItem={renderItem}
         keyExtractor={(_, index) => index.toString()}
         contentContainerStyle={styles.listContainer}
@@ -86,22 +103,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 40,
-    paddingBottom: 12,
+    paddingBottom: 0,
     backgroundColor: 'transparent',
+  },
+  headerTextWrapper: {
+    paddingHorizontal: 16,
+    marginBottom: 4,
+    marginTop: 8,
   },
   headerIconBtn: {
     padding: 8,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#7A1FA0',
-    marginBottom: 2,
+    marginBottom: 5,
+    textAlign: 'left',
   },
   headerSubtitle: {
-    fontSize: 13,
-    color: '#666',
+    fontSize: 16,
+    color: '#EC913F',
+    fontWeight: 'bold',
+    textAlign: 'left',
     lineHeight: 18,
+    marginBottom: 0,
   },
   listContainer: {
     padding: 16,
@@ -168,5 +194,9 @@ const styles = StyleSheet.create({
   },
   deleteBtn: {
     marginTop: 8,
+  },
+  searchBarWrapper: {
+    paddingHorizontal: 16,
+    marginBottom: 8,
   },
 }); 

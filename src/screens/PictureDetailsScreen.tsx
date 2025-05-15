@@ -1,5 +1,5 @@
 // PictureDetailsScreen.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../types/navigation';
@@ -18,6 +18,13 @@ export const PictureDetailsScreen = () => {
   const [editDescription, setEditDescription] = useState(description);
   const [editTime, setEditTime] = useState(time);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: '확인해보기',
+      headerBackTitle: '돌아가기',
+    });
+  }, [navigation]);
 
   const handleSave = () => {
     if (!editTitle.trim() || !editDescription.trim() || !editTime.trim()) {
