@@ -12,6 +12,7 @@ import {
   Alert,
   SafeAreaView,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -64,7 +65,7 @@ export const RegisterScreen = () => {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -200}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         enabled
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -72,66 +73,70 @@ export const RegisterScreen = () => {
             <View style={styles.topSpace} />
             <ToggleBar isLogin={false} />
             
-            <View style={styles.contentContainer}>
-              <View style={styles.headerContainer}>
-                <Text style={styles.title}>회원가입</Text>
-                <Text style={styles.subtitle}>KINO의 회원이 되어주세요</Text>
+            <ScrollView 
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+            >
+              <View style={styles.contentContainer}>
+                <View style={styles.headerContainer}>
+                  <Text style={styles.title}>회원가입</Text>
+                  <Text style={styles.subtitle}>KINO의 회원이 되어주세요</Text>
+                </View>
+
+                <View style={styles.formContainer}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="이메일"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    returnKeyType="next"
+                    editable={!isLoading}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="비밀번호"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    returnKeyType="next"
+                    editable={!isLoading}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="비밀번호 확인"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry
+                    returnKeyType="done"
+                    onSubmitEditing={Keyboard.dismiss}
+                    editable={!isLoading}
+                  />
+
+                  <TouchableOpacity 
+                    style={[styles.registerButton, isLoading && styles.registerButtonDisabled]} 
+                    onPress={handleRegister}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator color="#fff" />
+                    ) : (
+                      <Text style={styles.registerButtonText}>회원가입</Text>
+                    )}
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    style={styles.loginButton} 
+                    onPress={() => navigation.navigate('Login')}
+                    disabled={isLoading}
+                  >
+                    <Text style={styles.loginButtonText}>이미 계정이 있으신가요? 로그인</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-
-              <View style={styles.formContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="이메일"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  returnKeyType="next"
-                  editable={!isLoading}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="비밀번호"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                  returnKeyType="next"
-                  editable={!isLoading}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="비밀번호 확인"
-                  value={confirmPassword}
-                  onChangeText={setConfirmPassword}
-                  secureTextEntry
-                  returnKeyType="done"
-                  onSubmitEditing={Keyboard.dismiss}
-                  editable={!isLoading}
-                />
-
-                <TouchableOpacity 
-                  style={[styles.registerButton, isLoading && styles.registerButtonDisabled]} 
-                  onPress={handleRegister}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <Text style={styles.registerButtonText}>회원가입</Text>
-                  )}
-                </TouchableOpacity>
-
-                <TouchableOpacity 
-                  style={styles.loginButton} 
-                  onPress={() => navigation.navigate('Login')}
-                  disabled={isLoading}
-                >
-                  <Text style={styles.loginButtonText}>이미 계정이 있으신가요? 로그인</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-
-            <View style={styles.bottomSpace} />
+            </ScrollView>
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -153,10 +158,14 @@ const styles = StyleSheet.create({
   topSpace: {
     height: 80,
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   contentContainer: {
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 48,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 100,
   },
   headerContainer: {
     alignItems: 'center',
@@ -205,8 +214,5 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#7A1FA0',
     fontSize: 14,
-  },
-  bottomSpace: {
-    height: Platform.OS === 'ios' ? 20 : 100,
   },
 }); 

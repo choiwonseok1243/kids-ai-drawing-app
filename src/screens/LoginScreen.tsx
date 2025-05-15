@@ -12,6 +12,7 @@ import {
   Alert,
   SafeAreaView,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -54,7 +55,7 @@ export const LoginScreen = () => {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -200}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         enabled
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -62,62 +63,66 @@ export const LoginScreen = () => {
             <View style={styles.topSpace} />
             <ToggleBar isLogin={true} />
             
-            <View style={styles.contentContainer}>
-              <View style={styles.logoContainer}>
-                <Text style={styles.logo}>KINO</Text>
-                <Text style={styles.subtitle}>당신의 그림을 기록하세요</Text>
-              </View>
+            <ScrollView 
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              bounces={false}
+            >
+              <View style={styles.contentContainer}>
+                <View style={styles.logoContainer}>
+                  <Text style={styles.logo}>KINO</Text>
+                  <Text style={styles.subtitle}>당신의 그림을 기록하세요</Text>
+                </View>
 
-              <View style={styles.formContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="이메일"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  returnKeyType="next"
-                  editable={!isLoading}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="비밀번호"
-                  value={password}
-                  onChangeText={setPassword}
-                  secureTextEntry
-                  returnKeyType="done"
-                  onSubmitEditing={Keyboard.dismiss}
-                  editable={!isLoading}
-                />
+                <View style={styles.formContainer}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="이메일"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    returnKeyType="next"
+                    editable={!isLoading}
+                  />
+                  <TextInput
+                    style={styles.input}
+                    placeholder="비밀번호"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                    returnKeyType="done"
+                    onSubmitEditing={Keyboard.dismiss}
+                    editable={!isLoading}
+                  />
 
-                <TouchableOpacity 
-                  style={[styles.loginButton, isLoading && styles.loginButtonDisabled]} 
-                  onPress={handleLogin}
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <ActivityIndicator color="#fff" />
-                  ) : (
-                    <Text style={styles.loginButtonText}>로그인</Text>
-                  )}
-                </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={[styles.loginButton, isLoading && styles.loginButtonDisabled]} 
+                    onPress={handleLogin}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <ActivityIndicator color="#fff" />
+                    ) : (
+                      <Text style={styles.loginButtonText}>로그인</Text>
+                    )}
+                  </TouchableOpacity>
 
-                <TouchableOpacity 
-                  style={styles.registerButton} 
-                  onPress={() => navigation.navigate('Register')}
-                  disabled={isLoading}
-                >
-                  <View style={styles.registerButtonContent}>
-                    <Text style={styles.registerButtonText}>키노가 처음이신가요?</Text>
-                    <View style={styles.registerLinkContainer}>
-                      <Text style={styles.registerButtonLink}>계정 만들러 가기</Text>
+                  <TouchableOpacity 
+                    style={styles.registerButton} 
+                    onPress={() => navigation.navigate('Register')}
+                    disabled={isLoading}
+                  >
+                    <View style={styles.registerButtonContent}>
+                      <Text style={styles.registerButtonText}>키노가 처음이신가요?</Text>
+                      <View style={styles.registerLinkContainer}>
+                        <Text style={styles.registerButtonLink}>계정 만들러 가기</Text>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-
-            <View style={styles.bottomSpace} />
+            </ScrollView>
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
@@ -139,10 +144,14 @@ const styles = StyleSheet.create({
   topSpace: {
     height: 80,
   },
+  scrollContent: {
+    flexGrow: 1,
+  },
   contentContainer: {
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 48,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 100,
   },
   logoContainer: {
     alignItems: 'center',
@@ -203,9 +212,6 @@ const styles = StyleSheet.create({
   registerButtonLink: {
     color: '#FFFFFF',
     fontSize: 14,
-  },
-  bottomSpace: {
-    height: Platform.OS === 'ios' ? 20 : 100,
   },
   loginButtonDisabled: {
     backgroundColor: '#b984d1',
