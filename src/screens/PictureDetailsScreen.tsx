@@ -6,6 +6,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { deleteImage, updateImage, ImageData } from '../api/images';
 
 type PictureDetailsRouteProp = RouteProp<RootStackParamList, 'PictureDetails'>;
 type PictureDetailsNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -13,7 +14,7 @@ type PictureDetailsNavigationProp = NativeStackNavigationProp<RootStackParamList
 export const PictureDetailsScreen = () => {
   const route = useRoute<PictureDetailsRouteProp>();
   const navigation = useNavigation<PictureDetailsNavigationProp>();
-  const { imageUri, title: initialTitle, description: initialDescription, time: initialTime } = route.params;
+  const { imageUri, title: initialTitle, description: initialDescription, time: initialTime, imageData } = route.params;
 
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -45,26 +46,21 @@ export const PictureDetailsScreen = () => {
 
   const handleDelete = async () => {
     try {
-      // 파일이 존재하는지 확인
-      const fileInfo = await FileSystem.getInfoAsync(imageUri);
-      
-      if (fileInfo.exists) {
-        // 파일 삭제
-        await FileSystem.deleteAsync(imageUri);
+      if (imageData.id) {
+        await deleteImage(imageData.id);
         setDeleteModalVisible(false);
         Alert.alert('삭제 완료', '이미지가 성공적으로 삭제되었습니다.');
-        // 삭제된 이미지의 URI를 HomeScreen으로 전달
         navigation.navigate('Home', {
           deletedImageUri: imageUri,
           action: 'delete'
         });
       } else {
-        Alert.alert('오류', '파일을 찾을 수 없습니다.');
-        setDeleteModalVisible(false);
+        Alert.alert('오류', '이미지 정보를 찾을 수 없습니다.');
       }
     } catch (error) {
-      console.error('파일 삭제 중 오류 발생:', error);
-      Alert.alert('오류', '파일을 삭제하는 중에 문제가 발생했습니다.');
+      console.error('이미지 삭제 중 오류:', error);
+      Alert.alert('오류', '이미지를 삭제하는 중에 문제가 발생했습니다.');
+    } finally {
       setDeleteModalVisible(false);
     }
   };
@@ -73,22 +69,34 @@ export const PictureDetailsScreen = () => {
     setIsEditing(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title.trim() || !description.trim()) {
       Alert.alert('알림', '제목과 내용을 모두 입력해주세요!');
       return;
     }
 
-    // Navigate back to Home with updated data
-    navigation.navigate('Home', {
-      updatedImageData: {
-        uri: imageUri,
-        title,
-        description,
-        time: formatDate(date),
-      },
-      action: 'update'
-    });
+    try {
+      if (imageData.id) {
+        const updatedData: ImageData = {
+          id: imageData.id,
+          uri: imageUri,
+          title,
+          description,
+          time: formatDate(date),
+        };
+
+        await updateImage(updatedData);
+        navigation.navigate('Home', {
+          updatedImageData: updatedData,
+          action: 'update'
+        });
+      } else {
+        Alert.alert('오류', '이미지 정보를 찾을 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('이미지 업데이트 중 오류:', error);
+      Alert.alert('오류', '이미지 정보 업데이트에 실패했습니다.');
+    }
   };
 
   const handleCancel = () => {

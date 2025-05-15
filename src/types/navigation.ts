@@ -23,7 +23,14 @@ export type RootStackParamList = {
     imageUri: string;
     title: string;
     description: string;
-    time: string
+    time: string;
+    imageData: {
+      id?: string;
+      uri: string;
+      title: string;
+      description: string;
+      time: string;
+    };
   };
 };
 

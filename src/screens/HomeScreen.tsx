@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Alert, FlatList, Modal, Platform } from 'react-native';
 import { useNavigation, useFocusEffect, useRoute, RouteProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -6,6 +6,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { Picker } from '@react-native-picker/picker';
 import { MaterialIcons } from '@expo/vector-icons';
+import { uploadImage, getImages, updateImage, deleteImage, ImageData } from '../api/images';
 
 const { width } = Dimensions.get('window');
 
@@ -16,13 +17,14 @@ type SortOption = 'latest' | 'oldest' | 'title';
 export const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute<HomeScreenRouteProp>();
-  const [selectedImages, setSelectedImages] = useState<{ uri: string; title: string; description: string; time: string }[]>([]);
+  const [selectedImages, setSelectedImages] = useState<ImageData[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<SortOption>('latest');
   const [showSortPicker, setShowSortPicker] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const sortImages = useCallback((images: typeof selectedImages, option: SortOption) => {
+  const sortImages = useCallback((images: ImageData[], option: SortOption) => {
     const sorted = [...images];
     switch (option) {
       case 'latest':
@@ -36,21 +38,61 @@ export const HomeScreen = () => {
     }
   }, []);
 
+  // 이미지 목록 불러오기
+  const loadImages = async () => {
+    try {
+      setIsLoading(true);
+      const images = await getImages();
+      setSelectedImages(sortImages(images, sortOption));
+    } catch (error) {
+      console.error('이미지 로딩 중 오류:', error);
+      Alert.alert('오류', '이미지를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 초기 로딩
+  useEffect(() => {
+    loadImages();
+  }, []);
+
+  // 화면 포커스 시 데이터 새로고침
   useFocusEffect(
     useCallback(() => {
       if (route.params) {
         const { deletedImageUri, updatedImageData, action } = route.params;
         
         if (action === 'delete' && deletedImageUri) {
-          setSelectedImages(prev => sortImages(prev.filter(img => img.uri !== deletedImageUri), sortOption));
+          const imageToDelete = selectedImages.find(img => img.uri === deletedImageUri);
+          if (imageToDelete?.id) {
+            deleteImage(imageToDelete.id)
+              .then(() => {
+                setSelectedImages(prev => sortImages(prev.filter(img => img.uri !== deletedImageUri), sortOption));
+              })
+              .catch(error => {
+                console.error('이미지 삭제 중 오류:', error);
+                Alert.alert('오류', '이미지 삭제에 실패했습니다.');
+              });
+          }
           navigation.setParams({ deletedImageUri: undefined, action: undefined });
         } else if (action === 'update' && updatedImageData) {
-          setSelectedImages(prev => 
-            sortImages(
-              prev.map(img => img.uri === updatedImageData.uri ? updatedImageData : img),
-              sortOption
-            )
-          );
+          const imageToUpdate = selectedImages.find(img => img.uri === updatedImageData.uri);
+          if (imageToUpdate?.id) {
+            updateImage({ ...updatedImageData, id: imageToUpdate.id })
+              .then(updated => {
+                setSelectedImages(prev => 
+                  sortImages(
+                    prev.map(img => img.uri === updated.uri ? updated : img),
+                    sortOption
+                  )
+                );
+              })
+              .catch(error => {
+                console.error('이미지 업데이트 중 오류:', error);
+                Alert.alert('오류', '이미지 정보 업데이트에 실패했습니다.');
+              });
+          }
           navigation.setParams({ updatedImageData: undefined, action: undefined });
         }
       }
@@ -88,20 +130,27 @@ export const HomeScreen = () => {
     }
   };
 
-  const handleUploadFromUploadScreen = (newData: { uri: string; title: string; description: string; time: string }) => {
-    setSelectedImages(prev => sortImages([newData, ...prev], sortOption));
+  const handleUploadFromUploadScreen = async (newData: ImageData) => {
+    try {
+      const uploadedImage = await uploadImage(newData);
+      setSelectedImages(prev => sortImages([uploadedImage, ...prev], sortOption));
+    } catch (error) {
+      console.error('이미지 업로드 중 오류:', error);
+      Alert.alert('오류', '이미지 업로드에 실패했습니다.');
+    }
   };
 
-  const handleImagePress = (imageData: { uri: string; title: string; description: string; time: string }) => {
+  const handleImagePress = (image: ImageData) => {
     navigation.navigate('PictureDetails', {
-      imageUri: imageData.uri,
-      title: imageData.title,
-      description: imageData.description,
-      time: imageData.time,
+      imageUri: image.uri,
+      title: image.title,
+      description: image.description,
+      time: image.time,
+      imageData: image
     });
   };
 
-  const renderItem = ({ item }: { item: { uri: string; title: string; description: string; time: string } }) => (
+  const renderItem = ({ item }: { item: ImageData }) => (
     <TouchableOpacity onPress={() => handleImagePress(item)} style={styles.imageWrapper}>
       <Image source={{ uri: item.uri }} style={styles.image} resizeMode="cover" />
       <Text style={styles.imageTitle}>{item.title}</Text>
