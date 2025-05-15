@@ -165,16 +165,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   imageWrapper: {
-    width: width * 0.42, // 한 이미지를 2개의 열에 맞추기 위해 너비를 50%로 설정
+    width: width * 0.42,
     marginBottom: 20,
     backgroundColor: '#f5f5f5',
     borderRadius: 20,
     padding: 10,
     alignItems: 'center',
+    aspectRatio: 0.8,
   },
   image: {
     width: '100%',
-    height: width * 0.4, // 이미지의 높이를 너비에 맞게 조정
+    height: undefined,
+    aspectRatio: 1,
     borderRadius: 10,
   },
   imageTitle: {
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   columnWrapper: {
-    justifyContent: 'space-between', // 열 사이 간격 설정
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
   modalBackground: {

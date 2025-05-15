@@ -146,7 +146,7 @@ export const PictureDetailsScreen = () => {
           >
             {/* 이미지 카드 */}
             <View style={styles.imageCard}>
-              <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+              <Image source={{ uri: imageUri }} style={styles.image} resizeMode="contain" />
               <Text style={styles.dateText}>{time}</Text>
             </View>
 
@@ -252,7 +252,9 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 280,
+    height: undefined,
+    aspectRatio: 1,
+    resizeMode: 'contain',
   },
   dateText: {
     padding: 10,

@@ -63,14 +63,13 @@ export const UploadPictureScreen = () => {
           bounces={true}
           keyboardShouldPersistTaps="handled"
         >
-          <Image 
-            source={{ uri: imageUri }} 
-            style={[
-              styles.image, 
-              Platform.OS === 'android' && { height: 250 }  // Android에서는 이미지 높이를 좀 더 작게
-            ]} 
-            resizeMode="cover" 
-          />
+          <View style={styles.imageContainer}>
+            <Image 
+              source={{ uri: imageUri }} 
+              style={styles.image}
+              resizeMode="contain"
+            />
+          </View>
           <View style={styles.formContainer}>
             <Text style={styles.label}>제목</Text>
             <TextInput
@@ -134,12 +133,19 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'stretch',
   },
-  image: {
+  imageContainer: {
     width: '100%',
     height: 300,
+    backgroundColor: '#f5f5f5',
     borderRadius: 15,
     marginVertical: 20,
-    backgroundColor: '#eee',
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
   },
   label: {
     alignSelf: 'flex-start',
