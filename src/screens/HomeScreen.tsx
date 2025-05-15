@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Alert, FlatList, Modal } from 'react-native';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
@@ -9,9 +9,23 @@ const { width } = Dimensions.get('window');
 
 export const HomeScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute();
   const [selectedImages, setSelectedImages] = useState<{ uri: string; title: string; description: string; time: string }[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (route.params) {
+        const { deletedImageUri, action } = route.params as { deletedImageUri?: string; action?: string };
+        
+        if (action === 'delete' && deletedImageUri) {
+          setSelectedImages(prev => prev.filter(img => img.uri !== deletedImageUri));
+          navigation.setParams({ deletedImageUri: undefined, action: undefined });
+        }
+      }
+    }, [route.params])
+  );
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
