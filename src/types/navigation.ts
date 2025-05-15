@@ -3,6 +3,8 @@ export type RootStackParamList = {
   Drawing: undefined;
   Gallery: undefined;
   Settings: undefined;
+  Login: undefined;
+  Register: undefined;
   Home: {
     deletedImageUri?: string;
     updatedImageData?: {
