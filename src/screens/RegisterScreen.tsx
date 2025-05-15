@@ -11,18 +11,24 @@ import {
   Keyboard,
   Alert,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { register } from '../api/auth';
+import { useAuth } from '../contexts/AuthContext';
+import { ToggleBar } from '../components/ToggleBar';
 
 export const RegisterScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { setAuthData } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!email.trim() || !password.trim() || !confirmPassword.trim()) {
       Alert.alert('알림', '모든 필드를 입력해주세요.');
       return;
@@ -33,13 +39,24 @@ export const RegisterScreen = () => {
       return;
     }
 
-    // TODO: 실제 회원가입 로직 구현
-    Alert.alert('회원가입 성공', '환영합니다!', [
-      {
-        text: '확인',
-        onPress: () => navigation.replace('Login'),
-      },
-    ]);
+    try {
+      setIsLoading(true);
+      const response = await register(email, password);
+      
+      // 회원가입 성공 시 자동 로그인
+      await setAuthData(response.user, response.token);
+      
+      Alert.alert('회원가입 성공', '환영합니다!', [
+        {
+          text: '확인',
+          onPress: () => navigation.replace('Main'),
+        },
+      ]);
+    } catch (error) {
+      Alert.alert('회원가입 실패', error instanceof Error ? error.message : '회원가입에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -53,6 +70,7 @@ export const RegisterScreen = () => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.inner}>
             <View style={styles.topSpace} />
+            <ToggleBar isLogin={false} />
             
             <View style={styles.contentContainer}>
               <View style={styles.headerContainer}>
@@ -69,6 +87,7 @@ export const RegisterScreen = () => {
                   keyboardType="email-address"
                   autoCapitalize="none"
                   returnKeyType="next"
+                  editable={!isLoading}
                 />
                 <TextInput
                   style={styles.input}
@@ -77,6 +96,7 @@ export const RegisterScreen = () => {
                   onChangeText={setPassword}
                   secureTextEntry
                   returnKeyType="next"
+                  editable={!isLoading}
                 />
                 <TextInput
                   style={styles.input}
@@ -86,15 +106,25 @@ export const RegisterScreen = () => {
                   secureTextEntry
                   returnKeyType="done"
                   onSubmitEditing={Keyboard.dismiss}
+                  editable={!isLoading}
                 />
 
-                <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-                  <Text style={styles.registerButtonText}>회원가입</Text>
+                <TouchableOpacity 
+                  style={[styles.registerButton, isLoading && styles.registerButtonDisabled]} 
+                  onPress={handleRegister}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.registerButtonText}>회원가입</Text>
+                  )}
                 </TouchableOpacity>
 
                 <TouchableOpacity 
                   style={styles.loginButton} 
                   onPress={() => navigation.navigate('Login')}
+                  disabled={isLoading}
                 >
                   <Text style={styles.loginButtonText}>이미 계정이 있으신가요? 로그인</Text>
                 </TouchableOpacity>
@@ -119,17 +149,18 @@ const styles = StyleSheet.create({
   },
   inner: {
     flex: 1,
-    justifyContent: 'space-between',
   },
   topSpace: {
-    height: 20,
+    height: 80,
   },
   contentContainer: {
+    flex: 1,
     paddingHorizontal: 20,
+    paddingTop: 48,
   },
   headerContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 48,
   },
   title: {
     fontSize: 32,
@@ -158,6 +189,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 10,
+  },
+  registerButtonDisabled: {
+    backgroundColor: '#b984d1',
   },
   registerButtonText: {
     color: '#fff',

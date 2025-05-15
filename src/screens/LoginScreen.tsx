@@ -11,25 +11,42 @@ import {
   Keyboard,
   Alert,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { login } from '../api/auth';
+import { useAuth } from '../contexts/AuthContext';
+import { ToggleBar } from '../components/ToggleBar';
 
 export const LoginScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { setAuthData } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
       Alert.alert('알림', '이메일과 비밀번호를 모두 입력해주세요.');
       return;
     }
 
-    // TODO: 실제 로그인 로직 구현
-    Alert.alert('로그인 성공', '환영합니다!');
-    navigation.replace('Main');
+    try {
+      setIsLoading(true);
+      const response = await login(email, password);
+      
+      // 로그인 성공 시 인증 정보 저장
+      await setAuthData(response.user, response.token);
+      
+      // 메인 화면으로 이동
+      navigation.replace('Main');
+    } catch (error) {
+      Alert.alert('로그인 실패', error instanceof Error ? error.message : '로그인에 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -43,6 +60,7 @@ export const LoginScreen = () => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.inner}>
             <View style={styles.topSpace} />
+            <ToggleBar isLogin={true} />
             
             <View style={styles.contentContainer}>
               <View style={styles.logoContainer}>
@@ -59,6 +77,7 @@ export const LoginScreen = () => {
                   keyboardType="email-address"
                   autoCapitalize="none"
                   returnKeyType="next"
+                  editable={!isLoading}
                 />
                 <TextInput
                   style={styles.input}
@@ -68,17 +87,32 @@ export const LoginScreen = () => {
                   secureTextEntry
                   returnKeyType="done"
                   onSubmitEditing={Keyboard.dismiss}
+                  editable={!isLoading}
                 />
 
-                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                  <Text style={styles.loginButtonText}>로그인</Text>
+                <TouchableOpacity 
+                  style={[styles.loginButton, isLoading && styles.loginButtonDisabled]} 
+                  onPress={handleLogin}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <Text style={styles.loginButtonText}>로그인</Text>
+                  )}
                 </TouchableOpacity>
 
                 <TouchableOpacity 
                   style={styles.registerButton} 
                   onPress={() => navigation.navigate('Register')}
+                  disabled={isLoading}
                 >
-                  <Text style={styles.registerButtonText}>계정이 없으신가요? 회원가입</Text>
+                  <View style={styles.registerButtonContent}>
+                    <Text style={styles.registerButtonText}>키노가 처음이신가요?</Text>
+                    <View style={styles.registerLinkContainer}>
+                      <Text style={styles.registerButtonLink}>계정 만들러 가기</Text>
+                    </View>
+                  </View>
                 </TouchableOpacity>
               </View>
             </View>
@@ -101,17 +135,18 @@ const styles = StyleSheet.create({
   },
   inner: {
     flex: 1,
-    justifyContent: 'space-between',
   },
   topSpace: {
-    height: 20,
+    height: 80,
   },
   contentContainer: {
+    flex: 1,
     paddingHorizontal: 20,
+    paddingTop: 48,
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 48,
   },
   logo: {
     fontSize: 48,
@@ -150,11 +185,29 @@ const styles = StyleSheet.create({
     marginTop: 20,
     alignItems: 'center',
   },
+  registerButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   registerButtonText: {
-    color: '#7A1FA0',
+    color: '#666',
+    fontSize: 14,
+  },
+  registerLinkContainer: {
+    backgroundColor: '#7A1FA0',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+  },
+  registerButtonLink: {
+    color: '#FFFFFF',
     fontSize: 14,
   },
   bottomSpace: {
     height: Platform.OS === 'ios' ? 20 : 100,
+  },
+  loginButtonDisabled: {
+    backgroundColor: '#b984d1',
   },
 }); 
