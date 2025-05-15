@@ -3,7 +3,6 @@ import {
   View, 
   Text, 
   TextInput, 
-  Button, 
   Image, 
   StyleSheet, 
   KeyboardAvoidingView, 
@@ -11,6 +10,7 @@ import {
   Alert, 
   ScrollView,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Keyboard
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -52,7 +52,8 @@ export const UploadPictureScreen = () => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 80}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : -100}
+      enabled
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView 
@@ -62,7 +63,14 @@ export const UploadPictureScreen = () => {
           bounces={true}
           keyboardShouldPersistTaps="handled"
         >
-          <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+          <Image 
+            source={{ uri: imageUri }} 
+            style={[
+              styles.image, 
+              Platform.OS === 'android' && { height: 250 }  // Android에서는 이미지 높이를 좀 더 작게
+            ]} 
+            resizeMode="cover" 
+          />
           <View style={styles.formContainer}>
             <Text style={styles.label}>제목</Text>
             <TextInput
@@ -91,10 +99,19 @@ export const UploadPictureScreen = () => {
               returnKeyType="done"
             />
             <View style={styles.buttonContainer}>
-              <Button title="업로드" onPress={handleUpload} color="#7A1FA0" />
+              <TouchableOpacity 
+                style={styles.uploadButton}
+                onPress={handleUpload}
+                activeOpacity={0.8}
+              >
+                <Text style={styles.uploadButtonText}>업로드</Text>
+              </TouchableOpacity>
             </View>
           </View>
-          <View style={styles.bottomPadding} />
+          <View style={[
+            styles.bottomPadding,
+            Platform.OS === 'android' && { height: 80 }  // Android에서 하단 여백 증가
+          ]} />
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
@@ -134,6 +151,7 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
+    height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
@@ -149,7 +167,26 @@ const styles = StyleSheet.create({
     width: '100%',
     marginBottom: 20,
     marginTop: 10,
-    borderRadius: 10,
+  },
+  uploadButton: {
+    backgroundColor: '#7A1FA0',
+    paddingVertical: 16,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  uploadButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   bottomPadding: {
     height: 50,
