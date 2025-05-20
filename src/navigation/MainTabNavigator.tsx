@@ -6,15 +6,16 @@ import { CreateScreen } from '../screens/CreateScreen';
 import { MyGalleryScreen } from '../screens/MyGalleryScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { Ionicons } from '@expo/vector-icons';
+import type { BottomTabNavigationOptions } from '@react-navigation/bottom-tabs';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export const MainTabNavigator = () => {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      screenOptions={({ route }: { route: any }): BottomTabNavigationOptions => ({
         headerShown: false,
-        tabBarIcon: ({ focused, color }) => {
+        tabBarIcon: ({ focused, color }: { focused: boolean; color: string }) => {
           let iconName;
 
           switch (route.name) {
@@ -50,11 +51,7 @@ export const MainTabNavigator = () => {
       />
       <Tab.Screen 
         name="Draw" 
-<<<<<<< HEAD
         component={CreateScreen} 
-=======
-        component={DrawScreen} 
->>>>>>> b66f0db (Update HomeScreen with new upload image and improved layout)
         options={{ title: '제작' }}
       />
       <Tab.Screen 

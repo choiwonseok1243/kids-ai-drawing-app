@@ -59,7 +59,6 @@ export const MyGalleryScreen = () => {
 
   return (
     <View style={styles.container}>
-<<<<<<< HEAD
       <View style={styles.headerRow}>
         <TouchableOpacity onPress={() => Alert.alert('마이페이지로 이동(구현 필요)')}
           style={styles.headerIconBtn}>
@@ -90,10 +89,6 @@ export const MyGalleryScreen = () => {
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
       />
-=======
-      <Text style={styles.title}>보관함</Text>
-      <Text style={styles.subtitle}>나의 작품들을 모아보세요!</Text>
->>>>>>> b66f0db (Update HomeScreen with new upload image and improved layout)
     </View>
   );
 };

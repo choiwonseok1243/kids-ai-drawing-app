@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, Alert, FlatList, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -8,10 +7,6 @@ import { RootStackParamList } from '../types/navigation';
 import { useImages } from '../contexts/ImageContext';
 import { Ionicons } from '@expo/vector-icons';
 import SearchBar from '../components/SearchBar';
-=======
-import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from 'react-native';
->>>>>>> b66f0db (Update HomeScreen with new upload image and improved layout)
 
 const { width } = Dimensions.get('window');
 
@@ -84,7 +79,6 @@ export const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-<<<<<<< HEAD
       <View style={styles.headerRow}>
         <Text style={styles.title}>{"반가워요!\n오늘은 어떤 그림을 그렸나요?"}</Text>
         <TouchableOpacity onPress={() => setIsEditMode(e => !e)} style={styles.editBtn}>
@@ -131,17 +125,6 @@ export const HomeScreen = () => {
         columnWrapperStyle={styles.columnWrapper}
         showsVerticalScrollIndicator={false}
       />
-=======
-      <Text style={styles.title}>업로드</Text>
-      <Text style={styles.subtitle}>이미지를 업로드하고 AI로 변환해보세요!</Text>
-      <View style={styles.imageContainer}>
-        <Image
-          source={require('../../assets/upload.png')}
-          style={styles.image}
-          resizeMode="contain"
-        />
-      </View>
->>>>>>> b66f0db (Update HomeScreen with new upload image and improved layout)
     </View>
   );
 };
@@ -154,7 +137,6 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-<<<<<<< HEAD
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 40,
@@ -166,10 +148,6 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     display: 'none', // 기존 텍스트는 headerRow로 이동
-=======
-    padding: 20,
-    backgroundColor: '#fff',
->>>>>>> b66f0db (Update HomeScreen with new upload image and improved layout)
   },
   title: {
     fontSize: 24,
@@ -204,20 +182,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 30,
-  },
-  imageContainer: {
-    width: width * 0.8,
-    height: width * 0.8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 20,
-    padding: 20,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
   },
   imageWrapper: {
     width: width * 0.46,

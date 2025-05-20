@@ -1,3 +1,4 @@
+// UploadPictureScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Image, StyleSheet, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
