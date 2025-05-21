@@ -39,7 +39,7 @@ export const LoginScreen = () => {
       const response = await login(email, password);
       
       // 로그인 성공 시 인증 정보 저장
-      await setAuthData(response.user, response.token);
+      await setAuthData({ id: 'temp-id', email }, response.token);
       
       // 메인 화면으로 이동
       navigation.replace('Main');
@@ -70,14 +70,15 @@ export const LoginScreen = () => {
             >
               <View style={styles.contentContainer}>
                 <View style={styles.logoContainer}>
-                  <Text style={styles.logo}>KINO</Text>
-                  <Text style={styles.subtitle}>그림으로 펼쳐지는 우리들의 이야기</Text>
+                  <Text style={[styles.logo, { fontFamily: 'BMJUA' }]}>KINO</Text>
+                  <Text style={[styles.subtitle, { fontFamily: 'BMJUA' }]}>그림으로 펼쳐지는 우리들의 이야기</Text>
                 </View>
 
                 <View style={styles.formContainer}>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { fontFamily: 'BMJUA' }]}
                     placeholder="이메일"
+                    placeholderTextColor="#999"
                     value={email}
                     onChangeText={setEmail}
                     keyboardType="email-address"
@@ -86,8 +87,9 @@ export const LoginScreen = () => {
                     editable={!isLoading}
                   />
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { fontFamily: 'BMJUA' }]}
                     placeholder="비밀번호"
+                    placeholderTextColor="#999"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry
@@ -104,7 +106,7 @@ export const LoginScreen = () => {
                     {isLoading ? (
                       <ActivityIndicator color="#fff" />
                     ) : (
-                      <Text style={styles.loginButtonText}>로그인</Text>
+                      <Text style={[styles.loginButtonText, { fontFamily: 'BMJUA' }]}>로그인</Text>
                     )}
                   </TouchableOpacity>
 
@@ -114,9 +116,9 @@ export const LoginScreen = () => {
                     disabled={isLoading}
                   >
                     <View style={styles.registerButtonContent}>
-                      <Text style={styles.registerButtonText}>키노가 처음이신가요?</Text>
+                      <Text style={[styles.registerButtonText, { fontFamily: 'BMJUA' }]}>키노가 처음이신가요?</Text>
                       <View style={styles.registerLinkContainer}>
-                        <Text style={styles.registerButtonLink}>계정 만들러 가기</Text>
+                        <Text style={[styles.registerButtonLink, { fontFamily: 'BMJUA' }]}>계정 만들러 가기</Text>
                       </View>
                     </View>
                   </TouchableOpacity>

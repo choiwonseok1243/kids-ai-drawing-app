@@ -1,16 +1,34 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, SafeAreaView, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, SafeAreaView, Modal, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useImages } from '../contexts/ImageContext';
 import { width } from '../constants/Dimensions';
+import SearchBar from '../components/SearchBar';
 
 export const CreateScreen = ({ navigation }) => {
   const { images } = useImages();
   const [guideVisible, setGuideVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleSelectDrawing = (drawing) => {
     navigation.navigate('CreateDetail', { drawing });
   };
+
+  const cardIcons = [
+    { name: 'paw', color: '#FFB6B6' },
+    { name: 'balloon', color: '#FFD700' },
+    { name: 'star', color: '#FFD700' },
+    { name: 'cloud', color: '#B2E2FF' },
+    { name: 'people', color: '#A3D977' },
+    { name: 'heart', color: '#FF8C94' },
+  ];
+
+  const pastelGradients = [
+    ['#F8E8FF', '#FFF9D9'],
+    ['#D6F6FF', '#E6E6FF'],
+    ['#FFF3E0', '#E0FFE4'],
+  ];
+  const cardEmojis = ['🐻', '🎈', '⭐', '☁️', '🦄', '🦊', '🐥', '🦕'];
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -37,6 +55,15 @@ export const CreateScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <Text style={styles.subtitle}>업로드한 그림으로 이야기를 만들어보세요!</Text>
+      <View style={styles.searchBarWrapper}>
+        <SearchBar
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          placeholder="제목으로 검색해주세요 !"
+          iconColor="#7A1FA0"
+          iconSize={26}
+        />
+      </View>
       <Modal
         visible={guideVisible}
         transparent
@@ -74,7 +101,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    paddingTop: 40,
+    paddingTop: 18,
   },
   headerRow: {
     flexDirection: 'row',
@@ -93,6 +120,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 0,
     textAlign: 'left',
+    fontFamily: 'BMJUA',
   },
   guideBtn: {
     padding: 6,
@@ -107,6 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginBottom: 10,
     marginTop: 4,
+    fontFamily: 'BMJUA',
   },
   listContainer: {
     padding: 10,
@@ -115,19 +144,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 5,
   },
-  gridItem: {
-    width: width * 0.44,
-    marginBottom: 12,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 20,
-    padding: 10,
-    alignItems: 'center',
-  },
   imageContainer: {
     width: '100%',
     height: width * 0.4,
-    borderRadius: 10,
+    borderRadius: 16,
     overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#fff',
+    marginBottom: 8,
   },
   image: {
     width: '100%',
@@ -139,6 +163,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#333',
     textAlign: 'center',
+    fontFamily: 'BMJUA',
   },
   modalOverlay: {
     flex: 1,
@@ -164,24 +189,51 @@ const styles = StyleSheet.create({
     color: '#7A1FA0',
     marginBottom: 16,
     alignSelf: 'center',
+    fontFamily: 'BMJUA',
   },
   guideText: {
     fontSize: 15,
     color: '#333',
     marginBottom: 8,
     lineHeight: 22,
+    fontFamily: 'BMJUA',
   },
   closeBtn: {
     alignSelf: 'center',
     marginTop: 18,
-    backgroundColor: '#7A1FA0',
-    borderRadius: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 28,
+    backgroundColor: '#FFB6C1',
+    borderRadius: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 36,
+    shadowColor: '#FFB6C1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 4,
   },
   closeBtnText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: 'BMJUA',
+  },
+  searchBarWrapper: {
+    paddingHorizontal: 20,
+    marginBottom: 10,
+  },
+  gridItem: {
+    width: width * 0.44,
+    marginBottom: 16,
+    borderRadius: 24,
+    padding: 12,
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    shadowColor: '#E0BBFF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 2,
+    borderColor: '#fff',
   },
 }); 

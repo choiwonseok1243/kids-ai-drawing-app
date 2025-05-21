@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, FlatList, D
 import { colors, typography, spacing } from '../styles/theme';
 import { ScrollView } from 'react-native';
 import { useStories } from '../contexts/StoryContext';
+import { Ionicons } from '@expo/vector-icons';
 
 export const CreateDetailScreen = ({ route, navigation }) => {
   const { drawing } = route.params;
@@ -103,6 +104,7 @@ export const CreateDetailScreen = ({ route, navigation }) => {
             alignSelf: 'center',
             marginBottom: 8,
             overflow: 'hidden',
+            fontFamily: 'BMJUA',
           },
         ]}
       >
@@ -150,9 +152,9 @@ export const CreateDetailScreen = ({ route, navigation }) => {
           <Image source={{ uri: drawing.uri }} style={styles.image} resizeMode="contain" />
         </View>
         <View style={styles.formContainer}>
-          <Text style={styles.label}>제목</Text>
+          <Text style={[styles.label, { fontFamily: 'BMJUA' }]}>제목</Text>
           <Text style={styles.infoText}>{drawing.title}</Text>
-          <Text style={styles.label}>내용</Text>
+          <Text style={[styles.label, { fontFamily: 'BMJUA' }]}>내용</Text>
           <Text style={styles.infoText}>{drawing.description}</Text>
         </View>
         <View style={styles.buttonContainer}>
@@ -216,7 +218,7 @@ export const CreateDetailScreen = ({ route, navigation }) => {
       {/* 도트와 화살표를 한 줄에 배치 */}
       <View style={styles.indexRow}>
         <TouchableOpacity style={styles.arrowBtn} onPress={goPrev} disabled={currentIdx === 0}>
-          <Text style={[styles.arrowText, currentIdx === 0 && { opacity: 0.3 }]}>◀</Text>
+          <Ionicons name="chevron-back" size={28} color={currentIdx === 0 ? '#A16AE855' : '#A16AE8'} />
         </TouchableOpacity>
         {scenes.map((_, idx) => (
           <TouchableOpacity key={idx} onPress={() => {
@@ -227,7 +229,7 @@ export const CreateDetailScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         ))}
         <TouchableOpacity style={styles.arrowBtn} onPress={goNext} disabled={currentIdx === scenes.length - 1}>
-          <Text style={[styles.arrowText, currentIdx === scenes.length - 1 && { opacity: 0.3 }]}>▶</Text>
+          <Ionicons name="chevron-forward" size={28} color={currentIdx === scenes.length - 1 ? '#A16AE855' : '#A16AE8'} />
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -239,7 +241,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 20,
-    paddingTop: 30,
+    paddingTop: 40,
+    justifyContent: 'center',
   },
   dateContainer: {
     alignSelf: 'center',
@@ -313,9 +316,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
+    fontFamily: 'BMJUA',
   },
   submitButtonText: {
     color: '#fff',
+    fontFamily: 'BMJUA',
   },
   sceneRow: {
     flexDirection: 'row',
@@ -336,7 +341,7 @@ const styles = StyleSheet.create({
   placeholderText: {
     fontSize: 16,
     color: '#333',
-    fontFamily: 'System',
+    fontFamily: 'BMJUA',
     fontWeight: '500',
   },
   indexRow: {
@@ -344,7 +349,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
-    marginTop: 0,
+    marginTop: 32,
   },
   dot: {
     width: 10,
@@ -374,6 +379,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 8,
     padding: 12,
+    fontFamily: 'BMJUA',
   },
   headerRow: {
     flexDirection: 'row',
@@ -387,6 +393,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'center',
     marginBottom: 12,
+    fontFamily: 'BMJUA',
   },
   doneBtn: {
     padding: 10,
@@ -397,6 +404,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
+    fontFamily: 'BMJUA',
   },
   sceneCenter: {
     flexDirection: 'row',
@@ -430,6 +438,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'center',
     marginBottom: 12,
+    fontFamily: 'BMJUA',
   },
   sideShadow: {
     position: 'absolute',
@@ -450,10 +459,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     color: '#333',
+    fontFamily: 'BMJUA',
   },
   storyContent: {
     fontSize: 16,
     color: '#333',
+    fontFamily: 'BMJUA',
   },
   storyBtnRow: {
     flexDirection: 'row',
@@ -462,7 +473,7 @@ const styles = StyleSheet.create({
   },
   gradientBox: {
     width: 260,
-    marginTop: 0,
+    marginTop: 12,
     marginBottom: 18,
     borderRadius: 18,
     padding: 18,
@@ -478,6 +489,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#A16AE8',
     marginBottom: 8,
+    fontFamily: 'BMJUA',
   },
   gradientInput: {
     width: '100%',
@@ -487,6 +499,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
     padding: 0,
+    fontFamily: 'BMJUA',
   },
   scrollContainer: {
     flexGrow: 1,
@@ -556,6 +569,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     color: '#7A1FA0',
+    fontFamily: 'BMJUA',
   },
   topDoneBtn: {
     backgroundColor: '#8B4CFC',
@@ -570,5 +584,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     letterSpacing: 1,
+    fontFamily: 'BMJUA',
   },
 }); 

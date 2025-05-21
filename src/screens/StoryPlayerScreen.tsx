@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Dimensions } from 'react-native';
-import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Scene {
   image: string | null;
@@ -15,10 +16,8 @@ interface Story {
   scenes: Scene[];
 }
 
-type StoryPlayerRouteProp = RouteProp<any, any>;
-
 export const StoryPlayerScreen = () => {
-  const route = useRoute<StoryPlayerRouteProp>();
+  const route = useRoute();
   const navigation = useNavigation();
   const { story } = route.params as { story: Story };
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -71,10 +70,10 @@ export const StoryPlayerScreen = () => {
       />
       <View style={styles.arrowRow}>
         <TouchableOpacity style={styles.arrowBtn} onPress={goPrev} disabled={currentIdx === 0}>
-          <Text style={[styles.arrowText, currentIdx === 0 && { opacity: 0.3 }]}>◀</Text>
+          <Ionicons name="chevron-back" size={28} color={currentIdx === 0 ? '#A16AE855' : '#A16AE8'} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.arrowBtn} onPress={goNext} disabled={currentIdx === story.scenes.length - 1}>
-          <Text style={[styles.arrowText, currentIdx === story.scenes.length - 1 && { opacity: 0.3 }]}>▶</Text>
+          <Ionicons name="chevron-forward" size={28} color={currentIdx === story.scenes.length - 1 ? '#A16AE855' : '#A16AE8'} />
         </TouchableOpacity>
       </View>
     </View>
@@ -89,6 +88,7 @@ const styles = StyleSheet.create({
   slide: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
     paddingTop: 40,
     paddingBottom: 20,
   },
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
     color: '#A16AE8',
     marginBottom: 18,
     textAlign: 'center',
+    fontFamily: 'BMJUA',
   },
   imageWrap: {
     width: '90%',
@@ -127,11 +128,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#A16AE8',
     marginBottom: 8,
+    fontFamily: 'BMJUA',
   },
   storyContent: {
     fontSize: 16,
     color: '#222',
     lineHeight: 22,
+    fontFamily: 'BMJUA',
   },
   arrowRow: {
     flexDirection: 'row',
@@ -150,5 +153,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#A16AE8',
+    fontFamily: 'BMJUA',
   },
 }); 

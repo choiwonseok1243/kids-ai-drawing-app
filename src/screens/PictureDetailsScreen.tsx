@@ -4,6 +4,9 @@ import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, TextInput,
 import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../types/navigation';
 import { useImages } from '../contexts/ImageContext';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ko';
 
 type PictureDetailsRouteProp = RouteProp<RootStackParamList, 'PictureDetails'>;
 
@@ -18,6 +21,8 @@ export const PictureDetailsScreen = () => {
   const [editDescription, setEditDescription] = useState(description);
   const [editTime, setEditTime] = useState(time);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  dayjs.locale('ko');
 
   useEffect(() => {
     navigation.setOptions({
@@ -50,6 +55,8 @@ export const PictureDetailsScreen = () => {
     navigation.goBack();
   };
 
+  const formatDate = (date: Date) => dayjs(date).format('YYYY년 M월 D일 (dd)');
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -62,7 +69,7 @@ export const PictureDetailsScreen = () => {
           placeholder="제목을 입력하세요"
           value={editMode ? editTitle : title}
           onChangeText={setEditTitle}
-          style={styles.input}
+          style={[styles.input, { fontFamily: 'BMJUA' }]}
           editable={editMode}
         />
         <Text style={styles.label}>내용</Text>
@@ -70,17 +77,30 @@ export const PictureDetailsScreen = () => {
           placeholder="내용을 입력하세요"
           value={editMode ? editDescription : description}
           onChangeText={setEditDescription}
-          style={[styles.input, { height: 100 }]}
+          style={[styles.input, { height: 100, fontFamily: 'BMJUA' }]}
           multiline
           editable={editMode}
         />
         <Text style={styles.label}>날짜</Text>
-        <TextInput
-          placeholder="예: 2025-04-29"
-          value={editMode ? editTime : time}
-          onChangeText={setEditTime}
-          style={styles.input}
-          editable={editMode}
+        <TouchableOpacity 
+          onPress={() => editMode && setShowDatePicker(true)} 
+          style={[styles.input, { backgroundColor: '#fafafa' }]}
+        >
+          <Text style={{ color: '#333', fontFamily: 'BMJUA' }}>{editMode ? editTime : time}</Text>
+        </TouchableOpacity>
+        <DateTimePickerModal
+          isVisible={showDatePicker}
+          mode="date"
+          date={new Date()}
+          maximumDate={new Date()}
+          onConfirm={selectedDate => {
+            setShowDatePicker(false);
+            setEditTime(formatDate(selectedDate));
+          }}
+          onCancel={() => setShowDatePicker(false)}
+          locale="ko"
+          confirmTextIOS="확인"
+          cancelTextIOS="취소"
         />
         {editMode ? (
           <View style={styles.buttonContainer}>
@@ -144,6 +164,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
     color: '#7A1FA0',
+    fontFamily: 'BMJUA',
   },
   input: {
     width: '100%',
@@ -198,12 +219,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
+    fontFamily: 'BMJUA',
   },
   editButton: {
     backgroundColor: '#7A1FA0',
   },
   editButtonText: {
     color: '#fff',
+    fontFamily: 'BMJUA',
   },
   saveButton: {
     marginTop: 30,
@@ -211,18 +234,21 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     color: '#fff',
+    fontFamily: 'BMJUA',
   },
   cancelButton: {
     backgroundColor: '#F5F5F5',
   },
   cancelButtonText: {
     color: '#7A1FA0',
+    fontFamily: 'BMJUA',
   },
   deleteButton: {
     backgroundColor: '#FF8C94',
   },
   deleteButtonText: {
     color: '#fff',
+    fontFamily: 'BMJUA',
   },
   modalOverlay: {
     position: 'absolute',
@@ -251,6 +277,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#7A1FA0',
     marginBottom: 20,
+    fontFamily: 'BMJUA',
   },
   modalButtonRow: {
     flexDirection: 'row',
@@ -268,6 +295,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: 'BMJUA',
   },
   modalNoButton: {
     backgroundColor: '#F5F5F5',
@@ -279,11 +307,17 @@ const styles = StyleSheet.create({
     color: '#7A1FA0',
     fontSize: 18,
     fontWeight: 'bold',
+    fontFamily: 'BMJUA',
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     gap: 0, // gap은 RN 0.71+에서만 지원, marginLeft로 대체
+  },
+  value: {
+    fontSize: 16,
+    color: '#333',
+    fontFamily: 'BMJUA',
   },
 });

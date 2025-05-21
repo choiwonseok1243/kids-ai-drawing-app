@@ -77,7 +77,7 @@ export const MyGalleryScreen = () => {
         <SearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
-          placeholder="제목으로 검색"
+          placeholder="제목으로 검색해주세요 !"
           iconColor="#7A1FA0"
           iconSize={26}
         />
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     color: '#7A1FA0',
     marginBottom: 5,
     textAlign: 'left',
+    fontFamily: 'BMJUA',
   },
   headerSubtitle: {
     fontSize: 16,
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     lineHeight: 18,
     marginBottom: 0,
+    fontFamily: 'BMJUA',
   },
   listContainer: {
     padding: 16,
@@ -177,11 +179,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     marginBottom: 10,
+    fontFamily: 'BMJUA',
   },
   date: {
     fontSize: 18,
     color: '#fff',
     fontWeight: '600',
+    fontFamily: 'BMJUA',
   },
   thumbnail: {
     width: 110,

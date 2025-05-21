@@ -1,5 +1,7 @@
 export type RootStackParamList = {
   Main: undefined;
+  Login: undefined;
+  Register: undefined;
   Drawing: undefined;
   Gallery: undefined;
   Settings: undefined;

@@ -40,7 +40,8 @@ export const MainTabNavigator = () => {
         tabBarActiveTintColor: '#6200ee',
         tabBarInactiveTintColor: 'gray',
         tabBarLabelStyle: {
-          fontSize: 13
+          fontSize: 13,
+          fontFamily: 'BMJUA',
         }
       })}
     >

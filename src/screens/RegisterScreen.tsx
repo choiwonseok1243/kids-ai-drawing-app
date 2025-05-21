@@ -86,7 +86,7 @@ export const RegisterScreen = () => {
 
                 <View style={styles.formContainer}>
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { fontFamily: 'BMJUA' }]}
                     placeholder="이메일"
                     value={email}
                     onChangeText={setEmail}
@@ -96,7 +96,7 @@ export const RegisterScreen = () => {
                     editable={!isLoading}
                   />
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { fontFamily: 'BMJUA' }]}
                     placeholder="비밀번호"
                     value={password}
                     onChangeText={setPassword}
@@ -105,7 +105,7 @@ export const RegisterScreen = () => {
                     editable={!isLoading}
                   />
                   <TextInput
-                    style={styles.input}
+                    style={[styles.input, { fontFamily: 'BMJUA' }]}
                     placeholder="비밀번호 확인"
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
@@ -176,10 +176,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#7A1FA0',
     marginBottom: 10,
+    fontFamily: 'BMJUA',
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
+    fontFamily: 'BMJUA',
   },
   formContainer: {
     width: '100%',
@@ -206,6 +208,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+    fontFamily: 'BMJUA',
   },
   loginButton: {
     marginTop: 20,
@@ -214,5 +217,6 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#7A1FA0',
     fontSize: 14,
+    fontFamily: 'BMJUA',
   },
 }); 

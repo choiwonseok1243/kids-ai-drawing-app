@@ -17,6 +17,8 @@ export const HomeScreen = () => {
   const [pendingImageUri, setPendingImageUri] = useState<string | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortType, setSortType] = useState<'latest' | 'oldest' | 'title'>('latest');
+  const [sortModalVisible, setSortModalVisible] = useState(false);
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
@@ -63,6 +65,19 @@ export const HomeScreen = () => {
     image.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const sortedImages = React.useMemo(() => {
+    switch (sortType) {
+      case 'latest':
+        return [...filteredImages].sort((a, b) => b.time.localeCompare(a.time));
+      case 'oldest':
+        return [...filteredImages].sort((a, b) => a.time.localeCompare(b.time));
+      case 'title':
+        return [...filteredImages].sort((a, b) => a.title.localeCompare(b.title));
+      default:
+        return filteredImages;
+    }
+  }, [filteredImages, sortType]);
+
   const renderItem = ({ item }: { item: { uri: string; title: string; description: string; time: string } }) => (
     <View style={styles.imageWrapper}>
       <TouchableOpacity onPress={() => handleImagePress(item)} disabled={isEditMode}>
@@ -94,9 +109,47 @@ export const HomeScreen = () => {
         <SearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
-          placeholder="그림 제목이나 설명으로 검색"
+          placeholder="제목으로 검색해주세요 !"
         />
       </View>
+
+      <View style={{ alignItems: 'flex-end', width: '90%', alignSelf: 'center', marginBottom: 10 }}>
+        <TouchableOpacity
+          style={{ backgroundColor: '#f5f5f5', borderRadius: 8, paddingVertical: 6, paddingHorizontal: 18 }}
+          onPress={() => setSortModalVisible(true)}
+        >
+          <Text style={{ color: '#7A1FA0', fontWeight: 'bold', fontSize: 16, fontFamily: 'BMJUA' }}>
+            {sortType === 'latest' ? '최신순' : sortType === 'oldest' ? '오래된순' : '제목순'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <Modal
+        visible={sortModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSortModalVisible(false)}
+      >
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center' }}>
+          <View style={{ backgroundColor: 'white', borderRadius: 18, padding: 24, width: '80%', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 18, fontFamily: 'BMJUA' }}>정렬 방식</Text>
+            <TouchableOpacity onPress={() => { setSortType('latest'); setSortModalVisible(false); }} style={{ paddingVertical: 10, width: '100%' }}>
+              <Text style={{ color: sortType === 'latest' ? '#7A1FA0' : '#333', fontWeight: sortType === 'latest' ? 'bold' : 'normal', fontSize: 18, textAlign: 'center', fontFamily: 'BMJUA' }}>최신순</Text>
+            </TouchableOpacity>
+            <View style={{ height: 1, backgroundColor: '#eee', width: '100%' }} />
+            <TouchableOpacity onPress={() => { setSortType('oldest'); setSortModalVisible(false); }} style={{ paddingVertical: 10, width: '100%' }}>
+              <Text style={{ color: sortType === 'oldest' ? '#7A1FA0' : '#333', fontWeight: sortType === 'oldest' ? 'bold' : 'normal', fontSize: 18, textAlign: 'center', fontFamily: 'BMJUA' }}>오래된순</Text>
+            </TouchableOpacity>
+            <View style={{ height: 1, backgroundColor: '#eee', width: '100%' }} />
+            <TouchableOpacity onPress={() => { setSortType('title'); setSortModalVisible(false); }} style={{ paddingVertical: 10, width: '100%' }}>
+              <Text style={{ color: sortType === 'title' ? '#7A1FA0' : '#333', fontWeight: sortType === 'title' ? 'bold' : 'normal', fontSize: 18, textAlign: 'center', fontFamily: 'BMJUA' }}>제목순</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setSortModalVisible(false)} style={{ marginTop: 18, backgroundColor: '#eee', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 32, alignSelf: 'center' }}>
+              <Text style={{ color: '#333', fontWeight: 'bold', fontSize: 16, fontFamily: 'BMJUA' }}>닫기</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         animationType="slide"
@@ -118,7 +171,7 @@ export const HomeScreen = () => {
       </Modal>
 
       <FlatList
-        data={filteredImages}
+        data={sortedImages}
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
         numColumns={2}
@@ -147,7 +200,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   textContainer: {
-    display: 'none', // 기존 텍스트는 headerRow로 이동
+    display: 'none',
   },
   title: {
     fontSize: 24,
@@ -156,6 +209,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
     textAlign: 'left',
+    fontFamily: 'BMJUA',
   },
   subtitle: {
     fontSize: 16,
@@ -164,6 +218,7 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     paddingHorizontal: 20,
     marginBottom: 10,
+    fontFamily: 'BMJUA',
   },
   buttonContainer: {
     width: '90%',
@@ -182,6 +237,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
+    fontFamily: 'BMJUA',
   },
   imageWrapper: {
     width: width * 0.46,
@@ -204,6 +260,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     color: '#333',
     textAlign: 'center',
+    fontFamily: 'BMJUA',
   },
   deleteBtn: {
     position: 'absolute',
@@ -241,7 +298,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
-    marginTop: 5
+    marginTop: 5,
+    fontFamily: 'BMJUA',
   },
   modalButton: {
     backgroundColor: '#7A1FA0',
@@ -253,6 +311,7 @@ const styles = StyleSheet.create({
   modalButtonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontFamily: 'BMJUA',
   },
   modalCancel: {
     backgroundColor: '#ccc',
@@ -263,5 +322,6 @@ const styles = StyleSheet.create({
   modalCancelText: {
     color: '#333',
     fontWeight: 'bold',
+    fontFamily: 'BMJUA',
   },
 });

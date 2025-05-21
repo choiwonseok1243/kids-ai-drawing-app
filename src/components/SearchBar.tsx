@@ -25,7 +25,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#999"
+        placeholderTextColor="#333"
         autoCapitalize="none"
         autoCorrect={false}
         clearButtonMode="while-editing"
@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     padding: 0,
+    fontFamily: 'BMJUA',
   },
 });
 
