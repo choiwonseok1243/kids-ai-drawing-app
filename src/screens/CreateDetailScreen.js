@@ -51,6 +51,14 @@ export const CreateDetailScreen = ({ route, navigation }) => {
     newScenes.splice(idx, 0, newScene);
     setScenes(newScenes);
     setCurrentIdx(idx);
+    // 오른쪽에 추가할 때 자동 스크롤
+    if (direction === 'right') {
+      setTimeout(() => {
+        if (flatListRef.current && flatListRef.current.scrollToIndex) {
+          flatListRef.current.scrollToIndex({ index: idx, animated: true });
+        }
+      }, 100);
+    }
   };
 
   // 프롬프트 입력
@@ -88,59 +96,71 @@ export const CreateDetailScreen = ({ route, navigation }) => {
 
   // FlatList 렌더링 항목
   const renderScene = ({ item, index }) => (
-    <View style={[styles.storyContainer, { width: windowWidth }]}> 
-      <Text style={styles.storyTitle}>{title}</Text>
-      <Text
-        style={[
-          styles.sceneNumber,
-          {
-            paddingHorizontal: 14,
-            paddingVertical: 4,
-            borderRadius: 999,
-            borderWidth: 2,
-            borderColor: '#f9a8d4',
-            backgroundColor: '#fdf2f8',
-            fontWeight: 'bold',
-            fontSize: 18,
-            color: '#d946ef',
-            alignSelf: 'center',
-            marginBottom: 8,
-            overflow: 'hidden',
-            fontFamily: 'BMJUA',
-          },
-        ]}
-      >
-        {index + 1}
-      </Text>
-      <View style={styles.sceneRowWrap}>
-        <View style={styles.sideBarWrap}>
-          <TouchableOpacity onPress={() => addScene('left')} disabled={scenes.length >= 10} style={styles.sideAddBtn}>
-            <Text style={styles.sideAddBtnText}>＋</Text>
-          </TouchableOpacity>
-          <View style={styles.sideBar} />
+    <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }} keyboardShouldPersistTaps="handled">
+      <View style={[styles.storyContainer, { width: windowWidth }]}> 
+        <Text style={styles.storyTitle}>{title}</Text>
+        <Text
+          style={[
+            styles.sceneNumber,
+            {
+              paddingHorizontal: 14,
+              paddingVertical: 4,
+              borderRadius: 999,
+              borderWidth: 2,
+              borderColor: '#f9a8d4',
+              backgroundColor: '#fdf2f8',
+              fontWeight: 'bold',
+              fontSize: 18,
+              color: '#d946ef',
+              alignSelf: 'center',
+              marginBottom: 8,
+              overflow: 'hidden',
+              fontFamily: 'BMJUA',
+            },
+          ]}
+        >
+          {index + 1}
+        </Text>
+        <View style={styles.sceneRowWrap}>
+          <View style={styles.sideBarWrap}>
+            <TouchableOpacity onPress={() => addScene('left')} disabled={scenes.length >= 10} style={styles.sideAddBtn}>
+              <Text style={styles.sideAddBtnText}>＋</Text>
+            </TouchableOpacity>
+            <View style={styles.sideBar} />
+          </View>
+          <View style={styles.sceneImageWrapper}>
+            {item.image ? (
+              <Image source={{ uri: item.image }} style={styles.sceneImage} resizeMode="cover" />
+            ) : (
+              <View style={styles.placeholder}><Text style={styles.placeholderText}>내용을 적고 장면생성을 눌러주세요 !</Text></View>
+            )}
+          </View>
+          <View style={styles.sideBarWrap}>
+            <TouchableOpacity onPress={() => addScene('right')} disabled={scenes.length >= 10} style={styles.sideAddBtn}>
+              <Text style={styles.sideAddBtnText}>＋</Text>
+            </TouchableOpacity>
+            <View style={styles.sideBar} />
+          </View>
         </View>
-        <View style={styles.sceneImageWrapper}>
-          {item.image ? (
-            <Image source={{ uri: item.image }} style={styles.sceneImage} resizeMode="cover" />
-          ) : (
-            <View style={styles.placeholder}><Text style={styles.placeholderText}>이야기 내용을 작성 해주세요!</Text></View>
+        {/* 프롬프트 입력란 */}
+        <TextInput
+          style={[styles.input, styles.textArea]}
+          value={item.prompt}
+          onChangeText={text => setPrompt(text)}
+          placeholder="이야기 내용을 작성해주세요!"
+          placeholderTextColor="#888"
+          multiline
+          numberOfLines={4}
+        />
+        <View style={styles.storyBtnRow}>
+          {!item.isGenerated && (
+            <TouchableOpacity style={styles.generateBtn} onPress={generateScene}>
+              <Text style={styles.generateBtnText}>장면 생성</Text>
+            </TouchableOpacity>
           )}
         </View>
-        <View style={styles.sideBarWrap}>
-          <TouchableOpacity onPress={() => addScene('right')} disabled={scenes.length >= 10} style={styles.sideAddBtn}>
-            <Text style={styles.sideAddBtnText}>＋</Text>
-          </TouchableOpacity>
-          <View style={styles.sideBar} />
-        </View>
       </View>
-      <View style={styles.storyBtnRow}>
-        {!item.isGenerated && (
-          <TouchableOpacity style={styles.generateBtn} onPress={generateScene}>
-            <Text style={styles.generateBtnText}>장면 생성</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
+    </ScrollView>
   );
 
   if (!showStoryboard) {
@@ -366,6 +386,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#E0E0E0',
   },
   placeholderText: {
     color: '#666',
@@ -410,5 +431,15 @@ const styles = StyleSheet.create({
   pageIndicator: {
     fontSize: 16,
     color: '#666',
+  },
+  dateOverlay: {
+    fontSize: 28,
+    color: '#7A1FA0',
+    fontWeight: 'bold',
+    fontFamily: 'BMJUA',
+    textShadowColor: 'rgba(0,0,0,0.08)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    textAlign: 'center',
   },
 }); 

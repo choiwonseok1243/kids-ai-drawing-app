@@ -102,17 +102,19 @@ export const HomeScreen = () => {
       </View>
       <Text style={styles.subtitle}>하단의 +버튼을 눌러 사진을 추가해보세요!</Text>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={openModal}>
-          <Text style={styles.buttonText}>+</Text>
+      <View style={styles.bigButtonContainer}>
+        <TouchableOpacity style={styles.bigButton} onPress={openModal}>
+          <Text style={styles.bigButtonText}>+</Text>
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.searchBarWrapper}>
         <SearchBar
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder="제목으로 검색해주세요 !"
         />
       </View>
-      <Text style={styles.subtitle}>하단의 +버튼을 눌러 사진을 추가해보세요!</Text>
 
       <View style={{ alignItems: 'flex-end', width: '90%', alignSelf: 'center', marginBottom: 10 }}>
         <TouchableOpacity
@@ -198,7 +200,9 @@ const styles = StyleSheet.create({
     minHeight: 40,
   },
   editBtn: {
-    padding: 8,
+    padding: 6,
+    marginLeft: 8,
+    alignSelf: 'center',
   },
   textContainer: {
     display: 'none', // 기존 텍스트는 headerRow로 이동
@@ -213,11 +217,6 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontFamily: 'BMJUA',
   },
-  editBtn: {
-    padding: 6,
-    marginLeft: 8,
-    alignSelf: 'center',
-  },
   subtitle: {
     fontSize: 16,
     color: '#EC913F',
@@ -228,25 +227,30 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontFamily: 'BMJUA',
   },
-  buttonContainer: {
-    flexDirection: 'row',
+  bigButtonContainer: {
+    width: '100%',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    marginTop: 10,
     marginBottom: 10,
   },
-  button: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+  bigButton: {
+    width: '90%',
+    height: 56,
+    borderRadius: 16,
     backgroundColor: '#7A1FA0',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginBottom: 8,
   },
-  buttonText: {
+  bigButtonText: {
     color: '#fff',
-    fontSize: 24,
+    fontSize: 32,
     fontWeight: 'bold',
+  },
+  searchBarWrapper: {
+    width: '90%',
+    alignSelf: 'center',
+    marginBottom: 8,
   },
   columnWrapper: {
     justifyContent: 'space-between',
@@ -256,6 +260,14 @@ const styles = StyleSheet.create({
     width: (width - 40) / 2,
     marginBottom: 20,
     position: 'relative',
+    backgroundColor: '#E0E0E0',
+    borderRadius: 16,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
   image: {
     width: '100%',

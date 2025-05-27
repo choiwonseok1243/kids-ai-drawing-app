@@ -16,6 +16,7 @@ export const UploadPictureScreen = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [time, setTime] = useState('');
+  const [datePickerVisible, setDatePickerVisible] = useState(false);
 
   const handleUpload = () => {
     if (!title.trim() || !description.trim() || !time.trim()) {
@@ -38,6 +39,11 @@ export const UploadPictureScreen = () => {
     ]);
   };
 
+  const handleDateConfirm = (date: Date) => {
+    setTime(dayjs(date).format('YYYY-MM-DD'));
+    setDatePickerVisible(false);
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
       <KeyboardAvoidingView
@@ -52,6 +58,7 @@ export const UploadPictureScreen = () => {
             value={title}
             onChangeText={setTitle}
             style={styles.input}
+            placeholderTextColor="#888"
           />
           <Text style={styles.label}>내용</Text>
           <TextInput
@@ -60,13 +67,25 @@ export const UploadPictureScreen = () => {
             onChangeText={setDescription}
             style={[styles.input, { height: 100 }]}
             multiline
+            placeholderTextColor="#888"
           />
           <Text style={styles.label}>날짜</Text>
-          <TextInput
-            placeholder="예: 2025-04-29"
-            value={time}
-            onChangeText={setTime}
-            style={styles.input}
+          <TouchableOpacity onPress={() => setDatePickerVisible(true)} activeOpacity={0.8} style={{ width: '100%' }}>
+            <TextInput
+              placeholder="클릭하여 선택해주세요"
+              value={time}
+              style={styles.input}
+              editable={false}
+              pointerEvents="none"
+              placeholderTextColor="#888"
+            />
+          </TouchableOpacity>
+          <DateTimePickerModal
+            isVisible={datePickerVisible}
+            mode="date"
+            onConfirm={handleDateConfirm}
+            onCancel={() => setDatePickerVisible(false)}
+            locale="ko"
           />
           <View style={styles.buttonContainer}>
             <TouchableOpacity style={[styles.uploadButton, { backgroundColor: '#A97AFF' }]} onPress={handleUpload} activeOpacity={0.85}>
@@ -117,9 +136,14 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   uploadButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#fff',
+    textAlign: 'center',
+    width: '100%',
   },
 });
